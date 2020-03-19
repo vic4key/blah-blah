@@ -4,12 +4,25 @@
 class stream_t
 {
 public:
+  typedef std::ostream& (*fn)(std::ostream&);
+
   stream_t()
   {
   }
 
+  stream_t(stream_t& right)
+  {
+    *this = right;
+  }
+
   virtual ~stream_t()
   {
+  }
+
+  stream_t& operator=(stream_t& right)
+  {
+    m_stream.str(right.str());
+    return *this;
   }
 
   std::stringstream& stream()
@@ -29,9 +42,9 @@ public:
     return stream;
   }
 
-  friend stream_t& operator<<(stream_t& stream, std::ostream& (*v)(std::ostream&))
+  friend stream_t& operator<<(stream_t& stream, std::ostream& (*pfn)(std::ostream&))
   {
-    if (v == std::endl)
+    if (pfn == fn(std::endl))
     {
       stream.stream() << '\n';
     }
