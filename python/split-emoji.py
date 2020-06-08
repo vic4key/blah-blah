@@ -12,7 +12,7 @@ from PyVutils import Cv, Others
 
 def main():
 
-	im = Cv.Load("81728769_476823319933844_5792766045886349312_n.jpg")
+	im = Cv.Load(R"data\81728769_476823319933844_5792766045886349312_n.jpg")
 
 	nX, nY = (8, 5) # num X/Y icons
 	cX, cY = (int(im.shape[1] / nX), int(im.shape[0] / nY)) # size X/Y of an icon
@@ -28,7 +28,7 @@ def main():
 			emo = im[cY*Y : cY*(Y + 1), cX*X + X : cX*(X + 1) + X] # fixed the emo width by padding
 
 			# save emo to file
-			Cv.Save(RF"emos\{Y}-{X}.jpg", emo)
+			Cv.Save(RF"data\emos\{Y}-{X}.jpg", emo)
 
 			# push emo to stack
 			if emo_stack is None: emo_stack = emo
