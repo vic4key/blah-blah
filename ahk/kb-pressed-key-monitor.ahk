@@ -38,9 +38,9 @@ If LargeDisplay
    Gui Font, s%fsize% w%fformat%, %fname%
 
    ; 0x80 = SS_NOPREFIX -> Ampersand (&) is shown instead of underline one letter for Alt+letter navigation
-   ; Gui Add, Text, c%bcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName, tesT test test
+   Gui Add, Text, c%bcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName, tesT test test
    ; Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp-3 yp-3 , tesT test test
-   Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp yp, tesT test test
+   Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp-1 yp-1, tesT test test
 
    WinSet ExStyle, +0x20 ; WS_EX_TRANSPARENT -> mouse klickthrough
    WinSet TransColor, ffffff %opacity%
@@ -188,7 +188,7 @@ GetKeyStates()
    . ( GetKeyState("PgDn", "P") ? "PgDn + " : "" )
    . ( GetKeyState("Del", "P") ? "Del + " : "" )
    . ( GetKeyState("Ins", "P") ? "Ins + " : "" )
-   . ( GetKeyState("BS", "P") ? "BS + " : "" )
+   . ( GetKeyState("Backspace", "P") ? "Backspace + " : "" )
    . ( GetKeyState("Capslock", "P") ? "Capslock + " : "" )
    . ( GetKeyState("Numlock", "P") ? "Numlock + " : "" )
    . ( GetKeyState("PrintScreen", "P") ? "PrintScreen + " : "" )
