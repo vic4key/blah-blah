@@ -40,7 +40,7 @@ If LargeDisplay
    ; 0x80 = SS_NOPREFIX -> Ampersand (&) is shown instead of underline one letter for Alt+letter navigation
    Gui Add, Text, c%bcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName, tesT test test
    ; Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp-3 yp-3 , tesT test test
-   Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp-1 yp-1, tesT test test
+   Gui Add, Text, c%fcolor% Center +0x80 w%GUIw% h%GUIh% BackgroundTrans VblkOsdCtrlName2 xp-2 yp-2, tesT test test
 
    WinSet ExStyle, +0x20 ; WS_EX_TRANSPARENT -> mouse klickthrough
    WinSet TransColor, ffffff %opacity%
