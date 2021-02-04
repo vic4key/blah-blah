@@ -30,7 +30,7 @@ for file_path in glob.glob(path_dir):
   for row in range(0, rows):
     for col in range(0, cols):
       pixel = data[row * cols + col]
-      # pixel = color_black if pixel == 0 else color_white # if binary 0&1 image
+      pixel = color_black if pixel == 0 else color_white # if binary 0&1 image
       im.putpixel((col, row), pixel)
 
-  im.save(file_path + ".png")
+  im.save(file_path + ".gray.png")
