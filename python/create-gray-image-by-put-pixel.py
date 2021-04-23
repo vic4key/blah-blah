@@ -12,11 +12,12 @@
 import random as rd
 from PIL import Image
 from PyVutils import File
-import glob
+import glob, math
 
-# input parameter
 path_dir = RF"data\imgray\*.bin"
-rows, cols = 801, 801 # input parameter
+binary = False
+square = True
+rows, cols = None, None # required if `square = False`
 
 color_white = 0xFF
 color_black = 0x00
@@ -24,13 +25,17 @@ color_black = 0x00
 for file_path in glob.glob(path_dir):
 
   data = File.Read(file_path)
+
+  if square:
+    size = int(math.sqrt(len(data)))
+    rows, cols = size, size
   
   im = Image.new("L", (rows, cols), color_black)
 
   for row in range(0, rows):
     for col in range(0, cols):
       pixel = data[row * cols + col]
-      pixel = color_black if pixel == 0 else color_white # if binary 0&1 image
+      if binary: pixel = color_black if pixel == 0 else color_white
       im.putpixel((col, row), pixel)
 
   im.save(file_path + ".gray.png")
