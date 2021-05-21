@@ -1,88 +1,99 @@
-#include <itkImageFileWriter.h>
+#define VU_NO_EX
+#include <vu>
+
+typedef vu::Point3DT<int> P3I;
+typedef vu::Point3DT<double> P3D;
+
 #include <itkMetaImageIO.h>
+#include <itkImageFileWriter.h>
 
-#pragma comment(lib, "ITKBiasCorrection-4.4.lib")
-#pragma comment(lib, "ITKBioCell-4.4.lib")
-#pragma comment(lib, "ITKCommon-4.4.lib")
-#pragma comment(lib, "ITKDICOMParser-4.4.lib")
-#pragma comment(lib, "itkdouble-conversion-4.4.lib")
-#pragma comment(lib, "ITKEXPAT-4.4.lib")
-#pragma comment(lib, "ITKFEM-4.4.lib")
-#pragma comment(lib, "itkgdcmCommon-4.4.lib")
-#pragma comment(lib, "itkgdcmDICT-4.4.lib")
-#pragma comment(lib, "itkgdcmDSED-4.4.lib")
-#pragma comment(lib, "itkgdcmIOD-4.4.lib")
-#pragma comment(lib, "itkgdcmjpeg12-4.4.lib")
-#pragma comment(lib, "itkgdcmjpeg16-4.4.lib")
-#pragma comment(lib, "itkgdcmjpeg8-4.4.lib")
-#pragma comment(lib, "itkgdcmMSFF-4.4.lib")
-#pragma comment(lib, "ITKgiftiio-4.4.lib")
-#pragma comment(lib, "itkhdf5-4.4.lib")
-#pragma comment(lib, "itkhdf5_cpp-4.4.lib")
-#pragma comment(lib, "ITKIOBioRad-4.4.lib")
-#pragma comment(lib, "ITKIOBMP-4.4.lib")
-#pragma comment(lib, "ITKIOCSV-4.4.lib")
-#pragma comment(lib, "ITKIOGDCM-4.4.lib")
-#pragma comment(lib, "ITKIOGE-4.4.lib")
-#pragma comment(lib, "ITKIOGIPL-4.4.lib")
-#pragma comment(lib, "ITKIOHDF5-4.4.lib")
-#pragma comment(lib, "ITKIOImageBase-4.4.lib")
-#pragma comment(lib, "ITKIOIPL-4.4.lib")
-#pragma comment(lib, "ITKIOJPEG-4.4.lib")
-#pragma comment(lib, "ITKIOLSM-4.4.lib")
-#pragma comment(lib, "ITKIOMesh-4.4.lib")
-#pragma comment(lib, "ITKIOMeta-4.4.lib")
-#pragma comment(lib, "ITKIONIFTI-4.4.lib")
-#pragma comment(lib, "ITKIONRRD-4.4.lib")
-#pragma comment(lib, "ITKIOPNG-4.4.lib")
-#pragma comment(lib, "ITKIOSiemens-4.4.lib")
-#pragma comment(lib, "ITKIOSpatialObjects-4.4.lib")
-#pragma comment(lib, "ITKIOStimulate-4.4.lib")
-#pragma comment(lib, "ITKIOTIFF-4.4.lib")
-#pragma comment(lib, "ITKIOTransformBase-4.4.lib")
-#pragma comment(lib, "ITKIOTransformHDF5-4.4.lib")
-#pragma comment(lib, "ITKIOTransformInsightLegacy-4.4.lib")
-#pragma comment(lib, "ITKIOTransformMatlab-4.4.lib")
-#pragma comment(lib, "ITKIOVTK-4.4.lib")
-#pragma comment(lib, "ITKIOXML-4.4.lib")
-#pragma comment(lib, "itkjpeg-4.4.lib")
-#pragma comment(lib, "ITKKLMRegionGrowing-4.4.lib")
-#pragma comment(lib, "ITKLabelMap-4.4.lib")
-#pragma comment(lib, "ITKMesh-4.4.lib")
-#pragma comment(lib, "ITKMetaIO-4.4.lib")
-#pragma comment(lib, "itkNetlibSlatec-4.4.lib")
-#pragma comment(lib, "ITKniftiio-4.4.lib")
-#pragma comment(lib, "ITKNrrdIO-4.4.lib")
-#pragma comment(lib, "itkopenjpeg-4.4.lib")
-#pragma comment(lib, "ITKOptimizers-4.4.lib")
-#pragma comment(lib, "ITKOptimizersv4-4.4.lib")
-#pragma comment(lib, "ITKPath-4.4.lib")
-#pragma comment(lib, "itkpng-4.4.lib")
-#pragma comment(lib, "ITKPolynomials-4.4.lib")
-#pragma comment(lib, "ITKQuadEdgeMesh-4.4.lib")
-#pragma comment(lib, "ITKReview-4.4.lib")
-#pragma comment(lib, "ITKSpatialObjects-4.4.lib")
-#pragma comment(lib, "ITKStatistics-4.4.lib")
+typedef itk::Image<short, 3> ITKImageType;
+
 #pragma comment(lib, "itksys-4.4.lib")
-#pragma comment(lib, "itktiff-4.4.lib")
-#pragma comment(lib, "itkv3p_lsqr-4.4.lib")
-#pragma comment(lib, "itkv3p_netlib-4.4.lib")
-#pragma comment(lib, "itkvcl-4.4.lib")
-#pragma comment(lib, "ITKVideoCore-4.4.lib")
-#pragma comment(lib, "ITKVideoIO-4.4.lib")
-#pragma comment(lib, "itkvnl-4.4.lib")
-#pragma comment(lib, "ITKVNLInstantiation-4.4.lib")
-#pragma comment(lib, "itkvnl_algo-4.4.lib")
-#pragma comment(lib, "ITKVTK-4.4.lib")
-#pragma comment(lib, "ITKWatersheds-4.4.lib")
-#pragma comment(lib, "itkzlib-4.4.lib")
-#pragma comment(lib, "ITKznz-4.4.lib")
+#pragma comment(lib, "ITKMesh-4.4.lib")
+#pragma comment(lib, "ITKIOMeta-4.4.lib")
+#pragma comment(lib, "ITKMetaIO-4.4.lib")
+#pragma comment(lib, "ITKIOImageBase-4.4.lib")
+#pragma comment(lib, "ITKIOTransformBase-4.4.lib")
 
+ITKImageType::Pointer itk_create_image_3d(
+  const ITKImageType::PixelType* ptr_pixel_data,
+  const P3I& size,
+  const P3D& origin,
+  const P3D& spacing)
 {
-  typedef itk::ImageFileWriter<InternalImageType> WriterType;
+  auto result = ITKImageType::New();
+
+  ITKImageType::PointType _origin;
+  _origin[0] = origin.X(); // coordinates of the 
+  _origin[1] = origin.Y(); // first pixel in N-D
+  _origin[2] = origin.Z();
+  result->SetOrigin(_origin);
+
+  // Note: measurement units (e.g., mm, inches, etc.) are defined by the application.
+  ITKImageType::SpacingType _spacing;
+  _spacing[0] = spacing.X(); // spacing along X
+  _spacing[1] = spacing.Y(); // spacing along Y
+  _spacing[2] = spacing.Z(); // spacing along Z
+  result->SetSpacing(_spacing);
+
+  ITKImageType::IndexType _start;
+  _start[0] = 0; // first index on X
+  _start[1] = 0; // first index on Y
+  _start[2] = 0; // first index on Z
+
+  ITKImageType::SizeType _size;
+  _size[0] = size.X(); // size along column
+  _size[1] = size.Y(); // size along row
+  _size[2] = size.Z(); // size along depth
+
+  ITKImageType::RegionType region;
+  region.SetIndex(_start);
+  region.SetSize(_size);
+  result->SetRegions(region);
+
+  result->Allocate();
+
+  int idx = 0;
+  itk::ImageRegionIterator<ITKImageType> iter(result, region);
+  while (!iter.IsAtEnd())
+  {
+    iter.Set(ptr_pixel_data[idx++]);
+    ++iter;
+  }
+
+  return result;
+}
+
+void itk_save_image_3d(ITKImageType::Pointer image, std::string path)
+{
+  typedef itk::ImageFileWriter<ITKImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName("E:/image.mha");
-  writer->SetInput(pFixed);
+  writer->SetFileName(path.c_str());
+  writer->SetInput(image);
   writer->SetImageIO(itk::MetaImageIO::New());
   writer->Update();
 }
+
+void itk_save_image_3d(
+  const ITKImageType::PixelType* ptr_pixel_data,
+  const P3I& size,
+  const P3D& origin,
+  const P3D& spacing,
+  std::string path)
+{
+  auto image = itk_create_image_3d(ptr_pixel_data, size, origin, spacing);
+  itk_save_image_3d(image, path);
+}
+
+/*
+
+itk_save_image(
+  &FImageData[0],
+  P3I(m_xFDim, m_yFDim, m_zFDim),
+  P3D(m_xFImageStart, m_yFImageStart, m_zFImageStart),
+  P3D(m_xFImageSpacing, m_yFImageSpacing, m_zFImageSpacing),
+  "E:/image_fixed.mha"
+);
+
+/*
