@@ -1,5 +1,6 @@
 '''
 just a little bit fun with bit shifting
+https://stackoverflow.com/questions/2987741/what-is-the-difference-between-bit-shifting-and-arithmetical-operations
 '''
 
 >>> n = 0x12345678
