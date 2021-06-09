@@ -1,5 +1,3 @@
-// https://kitware.github.io/vtk-examples/site/Cxx/PolyData/PolyDataToImageData/
-
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
 #include <vtkMetaImageWriter.h>
@@ -7,36 +5,15 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataToImageStencil.h>
-
-#pragma comment(lib, "vtkImagingStencil-9.0.lib")
-#pragma comment(lib, "vtkCommonCore-9.0.lib")
-#pragma comment(lib, "vtkFiltersSources-9.0.lib")
-#pragma comment(lib, "vtkFiltersGeneral-9.0.lib")
-#pragma comment(lib, "vtkCommonComputationalGeometry-9.0.lib")
-#pragma comment(lib, "vtktiff-9.0.lib")
-#pragma comment(lib, "vtkpugixml-9.0.lib")
-#pragma comment(lib, "vtkCommonExecutionModel-9.0.lib")
-#pragma comment(lib, "vtkjpeg-9.0.lib")
-#pragma comment(lib, "vtkFiltersCore-9.0.lib")
-#pragma comment(lib, "vtkpng-9.0.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "vtkIOImage-9.0d.lib")
+#pragma comment(lib, "vtkImagingStencil-9.0d.lib")
+#else
 #pragma comment(lib, "vtkIOImage-9.0.lib")
-#pragma comment(lib, "vtkCommonSystem-9.0.lib")
-#pragma comment(lib, "vtksys-9.0.lib")
-#pragma comment(lib, "vtkImagingCore-9.0.lib")
-#pragma comment(lib, "vtkCommonMath-9.0.lib")
-#pragma comment(lib, "vtkloguru-9.0.lib")
-#pragma comment(lib, "vtkCommonTransforms-9.0.lib")
-#pragma comment(lib, "vtkzlib-9.0.lib")
-#pragma comment(lib, "vtkCommonDataModel-9.0.lib")
-#pragma comment(lib, "vtkDICOMParser-9.0.lib")
-#pragma comment(lib, "vtkCommonMisc-9.0.lib")
-#pragma comment(lib, "vtkmetaio-9.0.lib")
+#pragma comment(lib, "vtkImagingStencil-9.0.lib")
+#endif // DEBUG
 
-// VTK 6.0
-// #pragma comment(lib, "vtkIOImage-6.0.lib")
-// #pragma comment(lib, "vtkImagingStencil-6.0.lib")
-
-const auto fn_write_vtk_poly_data_as_mhd = [](vtkSmartPointer<vtkPolyData> pd, const std::string& file_name) -> void
+static vtkSmartPointer<vtkImageData> vtk_conv_poly_data_to_image_data(const vtkSmartPointer<vtkPolyData>& pd)
 {
   vtkNew<vtkImageData> whiteImage;
   double bounds[6];
@@ -64,7 +41,7 @@ const auto fn_write_vtk_poly_data_as_mhd = [](vtkSmartPointer<vtkPolyData> pd, c
   whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   // fill the image with foreground voxels:
-  unsigned char inval  = 255;
+  unsigned char inval = 255;
   unsigned char outval = 0;
   vtkIdType count = whiteImage->GetNumberOfPoints();
   for (vtkIdType i = 0; i < count; ++i)
@@ -89,10 +66,5 @@ const auto fn_write_vtk_poly_data_as_mhd = [](vtkSmartPointer<vtkPolyData> pd, c
   imgstenc->SetBackgroundValue(outval);
   imgstenc->Update();
 
-  vtkNew<vtkMetaImageWriter> writer;
-  writer->SetFileName(file_name.c_str());
-  writer->SetInputData(imgstenc->GetOutput());
-  writer->Write();
-};
-
-fn_write_vtk_poly_data_as_mhd(var_vtk_poly_data, "test.mhd");
+  return imgstenc->GetOutput();
+}
