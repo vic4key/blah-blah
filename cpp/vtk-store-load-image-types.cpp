@@ -5,10 +5,13 @@
 #pragma comment(lib, "vtkIOCore-9.0.lib")
 #pragma comment(lib, "vtkIOLegacy-9.0.lib")
 
-#include <vtkXMLImageDataWriter.h>
-
 #include <vtkXMLPolyDataReader.h>
 #pragma comment(lib, "vtkIOXML-9.0.lib")
+
+#include <vtkXMLImageDataReader.h>
+#include <vtkXMLImageDataWriter.h>
+
+#include <vtkMarchingCubes.h>
 
 // save vtkPolyData to .mhd file
 {
@@ -26,6 +29,20 @@
   writer->SetFileName("example.vti");
   writer->SetInputData(data.GetPointer());
   writer->Write();
+}
+
+// load vtkPolyData from .vti file
+{
+  file_path = file_dir + file_name;
+  vtkNew<vtkXMLImageDataReader> reader;
+  reader->SetFileName("example.vti");
+  reader->Update();
+
+  vtkNew<vtkMarchingCubes> surface; 
+  surface->SetInputData(reader->GetOutput());
+  surface->SetValue(0, 0.5);
+  surface->Update();
+  var_vtkPolyData = reader->GetOutput();
 }
 
 // save vtkPolyData to .vtk file
