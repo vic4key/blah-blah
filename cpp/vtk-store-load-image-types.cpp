@@ -5,8 +5,12 @@
 #pragma comment(lib, "vtkIOCore-9.0.lib")
 #pragma comment(lib, "vtkIOLegacy-9.0.lib")
 
+#include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
+
 #include <vtkXMLPolyDataReader.h>
-#pragma comment(lib, "vtkIOXML-9.0.lib")
+#include <vtkXMLPolyDataWriter.h>
+#pragma comment(lib, "vtkIOXML-6.0.lib")
 
 #include <vtkXMLImageDataReader.h>
 #include <vtkXMLImageDataWriter.h>
@@ -59,7 +63,7 @@
   reader->SetFileName("example.vtk");
   reader->Update();
   var_vtkPolyData = reader->GetOutput();
-};
+}
 
 // save vtkPolyData to .vtp file
 {
