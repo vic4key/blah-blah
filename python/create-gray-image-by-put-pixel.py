@@ -2,7 +2,9 @@
 
 '''
       {
-        std::string s = "path\\to\\image.bin";
+        std::string s = "path\\to\\bla-bla\\python\data\\imgray\\"
+        s += "image";
+        s += ".bin";
         auto f = fopen(s.c_str(), "wb");
         fwrite(&image(0), 1, image.bytes(), f);
         fclose(f);
@@ -15,9 +17,12 @@ from PyVutils import File
 import glob, math
 
 path_dir = RF"data\imgray\*.bin"
-binary = False
+binary = True
 square = True
-rows, cols = None, None # required if `square = False`
+cols, rows = None, None # required if `square = False`
+
+if not square:
+  assert rows and cols is not None, "missing value for number of rows and columns"
 
 color_white = 0xFF
 color_black = 0x00
@@ -29,8 +34,11 @@ for file_path in glob.glob(path_dir):
   if square:
     size = int(math.sqrt(len(data)))
     rows, cols = size, size
-  
-  im = Image.new("L", (rows, cols), color_black)
+
+  assert rows*cols == len(data), "data size did not met number of rows and columns"
+
+  im = Image.new("L", (cols, rows), color_black)
+  print("image =", im, "<%d>" % len(data))
 
   for row in range(0, rows):
     for col in range(0, cols):
