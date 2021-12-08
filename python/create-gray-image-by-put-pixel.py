@@ -2,7 +2,7 @@
 
 '''
       {
-        std::string s = "path\\to\\bla-bla\\python\\data\\imgray\\"
+        std::string s = "path\\to\\bla-bla\\python\\data\\imgray\\";
         s += "image";
         s += ".bin";
         auto f = fopen(s.c_str(), "wb");
