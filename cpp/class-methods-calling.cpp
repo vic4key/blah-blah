@@ -40,7 +40,12 @@ template <typename ...Args>
 void invoke(const std::string& method, Args... args)
 {
   print(m[method].type().name(), " => ", args...);
+
   // (m[method])(p, args...); // TODO: Vic. Recheck. Have not yet a solution to make a call.
+
+   // typedef std::pair<bool, bool>(UI::Window::*pfn)(UINT idx, LPARAM lp);
+   // auto method = std::any_cast<pfn>(method_ptr);
+   // auto result = (*this.*method)(idx, lp);
 }
 
 int main()
