@@ -13,7 +13,6 @@
 
 import random as rd
 from PIL import Image
-from PyVutils import File
 import glob, math
 
 path_dir = RF"data\imgray\*.bin"
@@ -29,7 +28,9 @@ color_black = 0x00
 
 for file_path in glob.glob(path_dir):
 
-  data = File.Read(file_path)
+  f = open(file_path, "rb")
+  data = f.read()
+  f.close()
 
   if square:
     size = int(math.sqrt(len(data)))
