@@ -1,3 +1,5 @@
+#include <rttidata.h>
+
 auto pObject = new class instance;
 
 auto pBase = PBYTE(module);
