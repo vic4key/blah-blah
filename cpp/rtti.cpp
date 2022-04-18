@@ -34,12 +34,5 @@ for (auto i = 0u; i < pClassDescriptor->numBaseClasses; i++)
 		//   // list all methods in the current base class
 		//   // then traversal to its base classes
 		//   // and append all their methods to method list
-		//   for (auto ptr = PULONG_PTR(*(ULONG_PTR*)(pTypeDescriptor->pVFTable)); ptr; ptr++)
-		//   {
-		//     auto address = ULONG_PTR(ptr);
-		//     vu::msg_debug_A("%p\n", address);
-		//   }
-		//   break;
-		// }
 	}
 }
