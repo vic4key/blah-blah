@@ -10,6 +10,8 @@
 #include <winhttp.h>
 #pragma comment(lib, "Winhttp.lib")
 
+#pragma warning(push)
+#pragma warning(disable: 4267)
 
 bool WinHttpWrapper::HttpRequest::Get(
 	const std::wstring& rest_of_path,
@@ -402,3 +404,5 @@ DWORD WinHttpWrapper::HttpRequest::ChooseAuthScheme(DWORD dwSupportedSchemes)
 	else
 		return 0;
 }
+
+#pragma warning(pop)
