@@ -43,6 +43,11 @@ array([[1., 0., 0.],
        [0., 1., 0.],
        [0., 0., 1.]])
 
+>>> np.eye(3)
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+
 # tạo mảng 2D 2x3 và khởi tạo các phần tử bằng 0
 
 >>> np.zeros((2, 3))
@@ -55,7 +60,21 @@ array([[0., 0., 0.],
 array([[1., 1., 1.],
        [1., 1., 1.]])
 
-# tạo mảng 2D 2x3 và khởi tạo các phần tử ngẫu nhiên trong khoảng 0-42
+# tạo mảng 2D 2x3 và khởi tạo các phần tử bằng gía trị bất kỳ
+
+>>> np.full((2, 3), 7)
+array([[7, 7, 7],
+       [7, 7, 7]])
+
+# tạo mảng 2D 2x3 và khởi tạo các phần tử ngẫu nhiên (or trong khoảng 0-42)
+
+>>> np.random.random((2, 3))
+array([[0.45048848, 0.67322254, 0.74757664],
+       [0.37236984, 0.31127365, 0.42583789]])
+
+>>> np.random.randint(42, size=(2, 3))
+array([[30, 26, 27],
+       [32,  0,  2]])
 
 >>> default_rng(42).random((2,3))
 array([[0.77395605, 0.43887844, 0.85859792],
