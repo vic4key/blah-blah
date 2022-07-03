@@ -17,8 +17,8 @@ import glob, math
 
 path_dir = RF"data\imgray\*.bin"
 binary = True
-square = True
-cols, rows = None, None # required if `square = False`
+cols, rows = None, None
+square = cols == rows
 
 if not square:
   assert rows and cols is not None, "missing value for number of rows and columns"
