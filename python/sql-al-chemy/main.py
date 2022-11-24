@@ -51,20 +51,28 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
 
     # Get
 
-    result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
-    print(vars(result.first()))
+    # get by query statement string
+    result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+    for e in result.all(): print(vars(e))
 
+    # filter_by
     fields = ["clan_acc", "id", "author", "description"]
     result = session.query(Clan).options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
     for e in result.all(): print(vars(e))
 
-    result = session.query(Clan).filter(Clan.id.startswith("mir")).where(Clan.author == "Gardner PP").order_by(asc(Clan.id)).limit(5)
+    # filter + startswith + order_by + limit
+    result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
+    print(vars(result.first()))
+
+    # filter + startswith
+    result = session.query(Clan).filter(Clan.id.startswith("mir")).limit(5)
     for e in result.all(): print(vars(e))
 
-    result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+    # like
+    result = session.query(Clan).filter(Clan.id.like("%rna%")).limit(5)
     for e in result.all(): print(vars(e))
 
-    # Insert
+    # insert
 
     try:
         # session.add(Author(name="Vic P.", initials="VP"))
@@ -78,7 +86,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
         session.rollback()
         print(e)
 
-    # Update
+    # update
 
     try:
         session.query(Author).where(Author.name == "Gardner P").update({
@@ -90,7 +98,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
         session.rollback()
         print(e)
 
-    # Delete
+    # delete
 
     try:
         session.query(Author).where(Author.name == "Gardner P").delete()
