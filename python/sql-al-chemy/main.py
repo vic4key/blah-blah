@@ -37,6 +37,7 @@ from sql_models import *
 
 
 # SQL query with ORM style
+
 # https://docs.sqlalchemy.org/en/20/orm/session_basics.html
 # https://docs.sqlalchemy.org/en/20/orm/quickstart.html
 # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_using_query.htm
@@ -60,6 +61,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
 
 
 # SQL query with classic style
+
 # https://docs.sqlalchemy.org/en/20/core/connections.html
 
 with engine.connect() as connection: # with engine.begin() as connection:
