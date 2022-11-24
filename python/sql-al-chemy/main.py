@@ -2,10 +2,33 @@
 
 from pprint import PrettyPrinter
 pp = PrettyPrinter(indent=2)
-print = pp.pprint
+pprint = pp.pprint
 
 
 
+# # https://docs.sqlalchemy.org/en/13/core/events.html
+
+# from sqlalchemy.pool import Pool
+# from sqlalchemy.event import listens_for
+
+# @listens_for(Pool, "first_connect")
+# def _on_first_connect(dbapi_connection, connection_record):
+#     print("_on_first_connect", dbapi_connection)
+
+# @listens_for(Pool, "connect", named=True)
+# def _on_connect(dbapi_connection, **kw):
+#     print("_on_connect", dbapi_connection)
+
+# @listens_for(Pool, "reset")
+# def _on_reset(dbapi_connection, connection_record):
+#     print("_on_reset", dbapi_connection)
+
+# @listens_for(Pool, "close")
+# def _on_close(dbapi_connection, connection_record):
+#     print("_on_close", dbapi_connection)
+
+
+    
 # make a connection string to a specified DB
 
 from urllib import parse
@@ -22,7 +45,7 @@ print(connection_string)
 
 
 
-# make a session that connected to a specified DB
+# create an engine database that use to connected to a specified database
 
 engine = create_engine(connection_string)
 print(engine)
@@ -53,24 +76,24 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
 
     # get by query statement string
     result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
-    for e in result.all(): print(vars(e))
+    for e in result.all(): pprint(vars(e))
 
     # filter_by
     fields = ["clan_acc", "id", "author", "description"]
     result = session.query(Clan).options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
-    for e in result.all(): print(vars(e))
+    for e in result.all(): pprint(vars(e))
 
     # filter + startswith + order_by + limit
     result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
-    print(vars(result.first()))
+    pprint(vars(result.first()))
 
     # filter + startswith
     result = session.query(Clan).filter(Clan.id.startswith("mir")).limit(5)
-    for e in result.all(): print(vars(e))
+    for e in result.all(): pprint(vars(e))
 
     # like
     result = session.query(Clan).filter(Clan.id.like("%rna%")).limit(5)
-    for e in result.all(): print(vars(e))
+    for e in result.all(): pprint(vars(e))
 
     # insert
 
@@ -84,7 +107,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
         session.commit()
     except Exception as e:
         session.rollback()
-        print(e)
+        pprint(e)
 
     # update
 
@@ -96,7 +119,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
         session.commit()
     except Exception as e:
         session.rollback()
-        print(e)
+        pprint(e)
 
     # delete
 
@@ -105,7 +128,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
         session.commit()
     except Exception as e:
         session.rollback()
-        print(e)
+        pprint(e)
 
 
 
