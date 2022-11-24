@@ -2,8 +2,14 @@
 #include <cstdio>
 #include <windows.h>
 
+#ifndef   BLABLA_CTM_2
+auto blabla_time_start = std::chrono::steady_clock::now();
+#else  // BLABLA_CTM_2
+extern std::chrono::steady_clock::time_point blabla_time_start;
+#endif // BLABLA_CTM_2
+
 #define CHRONO_LOGGER_START()\
-  auto blabla_time_start = std::chrono::steady_clock::now();
+  blabla_time_start = std::chrono::steady_clock::now();
 
 #define CHRONO_LOGGER_STOP(text)\
   {\
