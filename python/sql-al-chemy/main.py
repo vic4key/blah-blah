@@ -1,3 +1,5 @@
+# https://www.tutorialspoint.com/sqlalchemy/index.htm
+
 from pprint import PrettyPrinter
 pp = PrettyPrinter(indent=2)
 print = pp.pprint
@@ -47,6 +49,8 @@ from sql_models import *
 with Session(bind=engine) as session: # Note: A transaction is auto begun as default
     print(session)
 
+    # Get
+
     result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
     print(vars(result.first()))
 
@@ -59,6 +63,41 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
 
     result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
     for e in result.all(): print(vars(e))
+
+    # Insert
+
+    try:
+        # session.add(Author(name="Vic P.", initials="VP"))
+        session.add_all([
+            Author(name="Vic P. 1", initials="VP 1"),
+            Author(name="Vic P. 2", initials="VP 2"),
+            Author(name="Vic P. 3", initials="VP 3"),
+        ])
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(e)
+
+    # Update
+
+    try:
+        session.query(Author).where(Author.name == "Gardner P").update({
+            Author.name: "Vic P.", 
+            Author.initials: "VP",
+        })
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(e)
+
+    # Delete
+
+    try:
+        session.query(Author).where(Author.name == "Gardner P").delete()
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(e)
 
 
 
