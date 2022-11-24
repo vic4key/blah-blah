@@ -54,21 +54,20 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     result = session.query(Clan).options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
     for e in result.all(): print(vars(e))
 
-    # # ERROR: sqlalchemy.exc.InvalidRequestError: A transaction is already begun on this Session.
-    # with session.begin():
-    #     pass # transaction here
+    result = session.query(Clan).filter(Clan.id.startswith("mir")).where(Clan.author == "Gardner PP").order_by(asc(Clan.id)).limit(5)
+    for e in result.all(): print(vars(e))
 
 
 
-# SQL query with classic style
+# # SQL query with classic style
 
-# https://docs.sqlalchemy.org/en/20/core/connections.html
+# # https://docs.sqlalchemy.org/en/20/core/connections.html
 
-with engine.connect() as connection: # with engine.begin() as connection:
-    print(connection)
+# with engine.connect() as connection: # with engine.begin() as connection:
+#     print(connection)
 
-    result = connection.execute(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
-    for e in result.all(): print(e)
+#     result = connection.execute(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+#     for e in result.all(): print(e)
 
-    with connection.begin():
-        pass # transaction here
+#     with connection.begin():
+#         pass # transaction here
