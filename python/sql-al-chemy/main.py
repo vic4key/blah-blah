@@ -83,6 +83,8 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     result = session.query(Clan).options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
     for e in result.all(): pprint(vars(e))
 
+    # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_filter_operators.htm
+
     # filter + startswith + order_by + limit
     result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
     pprint(vars(result.first()))
