@@ -57,6 +57,9 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     result = session.query(Clan).filter(Clan.id.startswith("mir")).where(Clan.author == "Gardner PP").order_by(asc(Clan.id)).limit(5)
     for e in result.all(): print(vars(e))
 
+    result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+    for e in result.all(): print(vars(e))
+
 
 
 # # SQL query with classic style
