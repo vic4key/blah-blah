@@ -69,7 +69,7 @@ from sql_models import *
 # https://flask-sqlalchemy.palletsprojects.com/en/2.x/queries/
 # https://www.geeksforgeeks.org/querying-and-selecting-specific-column-in-sqlalchemy/
 
-with Session(bind=engine) as session: # Note: A transaction is auto begun as default
+with Session(bind=engine, autoflush=True) as session: # Note: A transaction is auto begun as default
     print(session)
 
     ''' Table 'clan' '''
