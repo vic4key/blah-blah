@@ -79,8 +79,14 @@ with Session(bind=engine, autoflush=True) as session: # Note: A transaction is a
     # Get
 
     # get by query statement string
-    result = Clan.query.from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+    statement = text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5")
+    result = Clan.query.from_statement(statement)
     for e in result.all(): pprint(vars(e))
+
+    # get by orm query statement (custom fields by using `select` will return tuple)
+    statement = select(Clan.clan_acc, Clan.id, Clan.author, Clan.description).where(Clan.author=="Gardner PP").limit(5)
+    result = session.execute(statement)
+    for e in result.all(): pprint(e)
 
     # filter_by
     fields = ["clan_acc", "id", "author", "description"]
