@@ -72,30 +72,38 @@ from sql_models import *
 with Session(bind=engine) as session: # Note: A transaction is auto begun as default
     print(session)
 
+    ''' Table 'clan' '''
+
+    Clan.query = session.query(Clan)
+
     # Get
 
     # get by query statement string
-    result = session.query(Clan).from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
+    result = Clan.query.from_statement(text("SELECT clan_acc, id, author, description FROM clan WHERE author='Gardner PP' ORDER BY id ASC LIMIT 5"))
     for e in result.all(): pprint(vars(e))
 
     # filter_by
     fields = ["clan_acc", "id", "author", "description"]
-    result = session.query(Clan).options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
+    result = Clan.query.options(load_only(*fields)).filter_by(author="Gardner PP").order_by(asc(Clan.id)).limit(5)
     for e in result.all(): pprint(vars(e))
 
     # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_filter_operators.htm
 
     # filter + startswith + order_by + limit
-    result = session.query(Clan).filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
+    result = Clan.query.filter(Clan.id.startswith("CRISPR")).order_by(asc(Clan.id)).limit(5)
     pprint(vars(result.first()))
 
     # filter + startswith
-    result = session.query(Clan).filter(Clan.id.startswith("mir")).limit(5)
+    result = Clan.query.filter(Clan.id.startswith("mir")).limit(5)
     for e in result.all(): pprint(vars(e))
 
     # like
-    result = session.query(Clan).filter(Clan.id.like("%rna%")).limit(5)
+    result = Clan.query.filter(Clan.id.like("%rna%")).limit(5)
     for e in result.all(): pprint(vars(e))
+
+    ''' Table 'author' '''
+
+    Author.query = session.query(Author)
 
     # insert
 
@@ -114,7 +122,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     # update
 
     try:
-        session.query(Author).where(Author.name == "Gardner P").update({
+        Author.query.where(Author.name == "Gardner P").update({
             Author.name: "Vic P.", 
             Author.initials: "VP",
         })
@@ -126,7 +134,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     # delete
 
     try:
-        session.query(Author).where(Author.name == "Gardner P").delete()
+        Author.query.where(Author.name == "Gardner P").delete()
         session.commit()
     except Exception as e:
         session.rollback()
