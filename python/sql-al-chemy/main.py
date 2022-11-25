@@ -108,7 +108,7 @@ with Session(bind=engine) as session: # Note: A transaction is auto begun as def
     # insert
 
     try:
-        # session.add(Author(name="Vic P.", initials="VP"))
+        session.add(Author(name="Vic P.", initials="VP"))
         session.add_all([
             Author(name="Vic P. 1", initials="VP 1"),
             Author(name="Vic P. 2", initials="VP 2"),
