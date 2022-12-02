@@ -14,7 +14,7 @@
 
 ''' to get the chat id
 1. send a message to the bot
-2. tun the command `curl https://api.telegram.org/bot<access_token>/getUpdates`
+2. tun the command `curl https://api.telegram.org/bot<bot_token>/getUpdates`
 3. the chat id can be found in the response
 '''
 
