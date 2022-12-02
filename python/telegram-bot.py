@@ -25,9 +25,11 @@ bot_name = "@da_Poet_BOT"
 bot_token = ""
 target_id = "1809685164" # the id of user that bot is chatting with (eg. 'vic4key')
 
+# pip install python-telegram-bot
+# 
 # from telegram import Bot
-# bot = Bot(access_token)
-# bot.send_message(chat_id, "hello world")
+# bot = Bot(bot_token)
+# bot.send_message(target_id, "halo")
 
 def send_to_telegram(message, chat_id=target_id, access_token=bot_token):
     import requests
