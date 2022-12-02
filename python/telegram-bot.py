@@ -37,10 +37,10 @@ def send_to_telegram(message, chat_id=target_id, access_token=bot_token):
     try:
         response = requests.post(
             f'https://api.telegram.org/bot{access_token}/sendMessage',
-            json={'chat_id': chat_id, 'text': message},
+            json={'chat_id': chat_id, 'text': message, 'parse_mode': 'html'},
             verify=False,
         )
         print(response.text)
     except Exception as e: print(e)
 
-send_to_telegram("halo")
+send_to_telegram("<b>halo</b> <i>halo</i> <u>halo</u>")
