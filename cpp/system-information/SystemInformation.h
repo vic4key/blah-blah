@@ -40,6 +40,12 @@ public:
     unsigned long long m_MinimumSize;
     unsigned long long m_MaximumSize;
 
+    struct
+    {
+      size_t m_Current;
+      size_t m_Limit;
+    } m_Committed;
+
     PagefileInformation()
     {
       Reset();
@@ -53,6 +59,8 @@ public:
       m_TotalSize = 0;
       m_MinimumSize = 0;
       m_MaximumSize = 0;
+      m_Committed.m_Current = 0;
+      m_Committed.m_Limit = 0;
     }
   };
 

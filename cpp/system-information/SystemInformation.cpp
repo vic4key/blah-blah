@@ -163,8 +163,9 @@ const size_t SystemInformation::GetRAMAvailableMemory(const bool includePagefile
 
   if (includePagefile)
   {
+    const auto RAMPhysicalInUsed = m_RAM.m_Memory.m_Physical.m_Total - m_RAM.m_Memory.m_Physical.m_Free;
     result = m_RAM.m_Memory.m_Pagefile.m_Information.m_MaximumSize + m_RAM.m_Memory.m_Physical.m_Total -
-      m_RAM.m_Memory.m_Physical.m_Free;
+      std::max(m_RAM.m_Memory.m_Pagefile.m_Information.m_Committed.m_Current, RAMPhysicalInUsed);
   }
 
   return result;

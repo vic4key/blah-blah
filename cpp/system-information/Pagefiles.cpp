@@ -15,6 +15,11 @@
 const unsigned long KiB = 1024;
 #endif // !KiB
 
+// https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-uint32x32to64
+// https://devblogs.microsoft.com/oldnewthing/20210510-00/?p=105200
+// MSDN said: This value is always a multiple of 4,096, which is the page size that is used in Windows.
+const ULONG PageSize = 4 * KiB; // 4KB
+
 /**
  * @refer ntstatus.h (MS WDDK - Microsoft Windows Driver Development Kit)
  */
@@ -75,18 +80,94 @@ struct SYSTEM_PAGEFILE_INFORMATION_EX
   ULONG MaximumSize;
 };
 
+/**
+ * @refer https://ultradefrag.net/doc/man/Windows NT(2000) Native API Reference.pdf
+ * @refer https://microsoft.github.io/WindowsDevicePortalWrapper/class_microsoft_1_1_tools_1_1_windows_device_portal_1_1_device_portal_1_1_system_performance_information.html
+ */
+struct SYSTEM_PERFORMANCE_INFORMATION_EX
+{
+  LARGE_INTEGER IdleProcessTime;
+  LARGE_INTEGER IoReadTransferCount;
+  LARGE_INTEGER IoWriteTransferCount;
+  LARGE_INTEGER IoOtherTransferCount;
+  ULONG IoReadOperationCount;
+  ULONG IoWriteOperationCount;
+  ULONG IoOtherOperationCount;
+  ULONG AvailablePages;
+  ULONG CommittedPages;
+  ULONG CommitLimit;
+  ULONG PeakCommitment;
+  ULONG PageFaultCount;
+  ULONG CopyOnWriteCount;
+  ULONG TransitionCount;
+  ULONG CacheTransitionCount;
+  ULONG DemandZeroCount;
+  ULONG PageReadCount;
+  ULONG PageReadIoCount;
+  ULONG CacheReadCount;
+  ULONG CacheIoCount;
+  ULONG DirtyPagesWriteCount;
+  ULONG DirtyWriteIoCount;
+  ULONG MappedPagesWriteCount;
+  ULONG MappedWriteIoCount;
+  ULONG PagedPoolPages;
+  ULONG NonPagedPoolPages;
+  ULONG PagedPoolAllocs;
+  ULONG PagedPoolFrees;
+  ULONG NonPagedPoolAllocs;
+  ULONG NonPagedPoolFrees;
+  ULONG FreeSystemPtes;
+  ULONG ResidentSystemCodePage;
+  ULONG TotalSystemDriverPages;
+  ULONG TotalSystemCodePages;
+  ULONG NonPagedPoolLookasideHits;
+  ULONG PagedPoolLookasideHits;
+  ULONG AvailablePagedPoolPages;
+  ULONG ResidentSystemCachePage;
+  ULONG ResidentPagedPoolPage;
+  ULONG ResidentSystemDriverPage;
+  ULONG CcFastReadNoWait;
+  ULONG CcFastReadWait;
+  ULONG CcFastReadResourceMiss;
+  ULONG CcFastReadNotPossible;
+  ULONG CcFastMdlReadNoWait;
+  ULONG CcFastMdlReadWait;
+  ULONG CcFastMdlReadResourceMiss;
+  ULONG CcFastMdlReadNotPossible;
+  ULONG CcMapDataNoWait;
+  ULONG CcMapDataWait;
+  ULONG CcMapDataNoWaitMiss;
+  ULONG CcMapDataWaitMiss;
+  ULONG CcPinMappedDataCount;
+  ULONG CcPinReadNoWait;
+  ULONG CcPinReadWait;
+  ULONG CcPinReadNoWaitMiss;
+  ULONG CcPinReadWaitMiss;
+  ULONG CcCopyReadNoWait;
+  ULONG CcCopyReadWait;
+  ULONG CcCopyReadNoWaitMiss;
+  ULONG CcCopyReadWaitMiss;
+  ULONG CcMdlReadNoWait;
+  ULONG CcMdlReadWait;
+  ULONG CcMdlReadNoWaitMiss;
+  ULONG CcMdlReadWaitMiss;
+  ULONG CcReadAheadIos;
+  ULONG CcLazyWriteIos;
+  ULONG CcLazyWritePages;
+  ULONG CcDataFlushes;
+  ULONG CcDataPages;
+  ULONG ContextSwitches;
+  ULONG FirstLevelTbFills;
+  ULONG SecondLevelTbFills;
+  ULONG SystemCalls;
+  ULONGLONG CcTotalDirtyPages; // since THRESHOLD
+  ULONGLONG CcDirtyPageThreshold; // since THRESHOLD
+  LONGLONG ResidentAvailablePages; // since THRESHOLD
+  ULONGLONG SharedCommittedPages; // since THRESHOLD
+};
+
 inline NTSTATUS EnumPagefiles(std::function<void(SYSTEM_PAGEFILE_INFORMATION_EX*)> fn)
 {
-  if (fnNtQuerySystemInformation == nullptr)
-  {
-    auto pModule = GetModuleHandle(L"ntdll");
-    if (pModule != nullptr)
-    {
-      fnNtQuerySystemInformation = reinterpret_cast<FnNtQuerySystemInformation>(
-        GetProcAddress(pModule, "NtQuerySystemInformation"));
-    }
-  }
-
   assert(fnNtQuerySystemInformation != nullptr);
 
   ULONG size = 1*KiB;
@@ -140,6 +221,31 @@ inline bool GetPagefiles(std::vector<SystemInformation::PagefileInformation>& pa
 {
   pagefiles.clear();
 
+  if (fnNtQuerySystemInformation == nullptr)
+  {
+    auto pModule = GetModuleHandle(L"ntdll");
+    if (pModule != nullptr)
+    {
+      fnNtQuerySystemInformation = reinterpret_cast<FnNtQuerySystemInformation>(
+        GetProcAddress(pModule, "NtQuerySystemInformation"));
+    }
+  }
+
+  assert(fnNtQuerySystemInformation != nullptr);
+
+  // Pagefiles - Commit-charge
+
+  SYSTEM_PERFORMANCE_INFORMATION_EX spi = { 0 };
+
+  NTSTATUS status = fnNtQuerySystemInformation(SystemPerformanceInformation, &spi, sizeof(spi), nullptr);
+
+  if (!NT_SUCCESS(status))
+  {
+    return status;
+  }
+
+  // Pagefiles - Page-files
+
   auto fnUnicodeStringToStdWString = [](const UNICODE_STRING& s) -> std::wstring
   {
     std::wstring result;
@@ -148,7 +254,7 @@ inline bool GetPagefiles(std::vector<SystemInformation::PagefileInformation>& pa
     return result;
   };
 
-  NTSTATUS status = EnumPagefiles([&](SYSTEM_PAGEFILE_INFORMATION_EX* pPagefile) -> void
+  status = EnumPagefiles([&](SYSTEM_PAGEFILE_INFORMATION_EX* pPagefile) -> void
   {
     const std::wstring Prefix = L"\\??\\";
     auto fileName = fnUnicodeStringToStdWString(pPagefile->Info.PageFileName);
@@ -157,11 +263,6 @@ inline bool GetPagefiles(std::vector<SystemInformation::PagefileInformation>& pa
       fileName = fileName.substr(Prefix.length());
     }
 
-    // https://learn.microsoft.com/en-us/windows/win32/api/winnt/nf-winnt-uint32x32to64
-    // https://devblogs.microsoft.com/oldnewthing/20210510-00/?p=105200
-    // MSDN said: This value is always a multiple of 4,096, which is the page size that is used in Windows.
-    const ULONG PageSize = 4*KiB; // 4KB
-
     SystemInformation::PagefileInformation pi;
     pi.m_FileName = fileName;
     pi.m_Usage = UInt32x32To64(pPagefile->Info.TotalInUse, PageSize);
@@ -169,6 +270,8 @@ inline bool GetPagefiles(std::vector<SystemInformation::PagefileInformation>& pa
     pi.m_TotalSize = UInt32x32To64(pPagefile->Info.TotalSize, PageSize);
     pi.m_MinimumSize = UInt32x32To64(pPagefile->MinimumSize, PageSize);
     pi.m_MaximumSize = UInt32x32To64(pPagefile->MaximumSize, PageSize);
+    pi.m_Committed.m_Current = UInt32x32To64(spi.CommittedPages, PageSize);
+    pi.m_Committed.m_Limit = UInt32x32To64(spi.CommitLimit, PageSize);
 
     pagefiles.emplace_back(std::move(pi));
   });
