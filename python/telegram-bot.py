@@ -19,10 +19,15 @@
 3. the chat id can be found in the response
 '''
 
+import os
+import dotenv
+dotenv.load_dotenv()
+
 # bot information
 
 bot_name = "@da_Poet_BOT"
-bot_token = ""
+bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+print(bot_token)
 
 # send message via requests
 

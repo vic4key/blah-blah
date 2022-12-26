@@ -1,0 +1,11 @@
+capstone
+matplotlib
+numpy
+pefile
+Pillow
+pulp
+python-dotenv
+pywin32
+requests
+scipy
+SQLAlchemy
