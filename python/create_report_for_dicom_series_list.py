@@ -1,6 +1,6 @@
 import os
 import shutil
-from PyVutils import DCM, File
+import PyVutils as vu
 
 # configurations
 
@@ -19,12 +19,14 @@ list_tags_to_use = {
 }
 
 # filter series to print list by its number of images
-list_image_count_in_usable_series = [159, 197] # Case2
+list_image_count_in_usable_series = None
+# list_image_count_in_usable_series = [159, 197] # Case2
 # list_image_count_in_usable_series = [87] # Verona
 # list_image_count_in_usable_series = [69, 123, 128] # Xijing Site
 
 # number of images to print
-number_of_images_to_use = 5
+number_of_images_to_use = None
+# number_of_images_to_use = 5
 # number_of_images_to_use = max(list_image_count_in_usable_series)
 
 file_dir = R"path\to\folder\dicom-4d-series\Data-4DCT\4DCT2\Case2"
@@ -40,13 +42,34 @@ report_name = "Case2"
 
 # load dicom files and sort slices in each series by slice location then filter usable series
 
+def fn_sort(ds):
+    if [0x0020, 0x1041] in ds:   # Slice Location
+        return ds[0x0020, 0x1041].value
+    elif [0x0020, 0x0032] in ds: # Image Position
+        return float(ds[0x0020, 0x0032][2])
+    raise "missing field for sorting by z-position"
+
 usable_series = []
-list_series = DCM.Loadirectory(file_dir)
+usable_series_image_counts = set()
+list_series = vu.load_dicom_directory(file_dir)
 for series in list_series.values():
-    if len(series) in list_image_count_in_usable_series:
-        series.sort(key = lambda ds: ds[0x0020, 0x1041].value) # slice location
+    if not list_image_count_in_usable_series or len(series) in list_image_count_in_usable_series:
+        series.sort(key=fn_sort)
         usable_series.append(series)
+        usable_series_image_counts.add(len(series))
 usable_series.sort(key = lambda series: len(series))
+
+if len(usable_series) == 0:
+    raise "no image series"
+
+if number_of_images_to_use is None:
+    if len(usable_series_image_counts) > 0:
+        number_of_images_to_use = min(usable_series_image_counts)
+    else:
+        raise "missing `number_of_images_to_use`"
+else:
+    if number_of_images_to_use > min(usable_series_image_counts):
+        raise "invalid `number_of_images_to_use`"
 
 # xls - header row of series name
 
@@ -55,7 +78,7 @@ for series in usable_series:
     file_name = os.path.dirname(series[0].filename).split("\\")[-1]
     file_name = "%s (%d images)" % (file_name, len(series))
     # file_name = "%s (%d images)" % (series[0][0x0008, 0x103E].value, len(series)) # series description
-    file_name = File.CleanFileName(file_name)
+    file_name = vu.clean_file_name(file_name)
     lines += "%s\t" % file_name
 lines += "\n"
 
@@ -77,8 +100,8 @@ for i in range(0, number_of_images_to_use):
             # src_file_path = series[i].filename
             # dst_file_path = file_path
             # shutil.copy(src_file_path, dst_file_path)
+            # print(f"=> '{file_path}'")
 
-            print(f"=> '{file_path}'")
             try:
                 if type(tag) is list: # sequence
                     _1, _2 = tag[0]
@@ -93,5 +116,5 @@ for i in range(0, number_of_images_to_use):
 
 # xls - write to file
 
-File.Write(RF"report_{report_name}.xls", lines.encode("utf-8"))
+vu.write_file(RF"report_{report_name}.xls", lines.encode("utf-8"))
 print("Done!!")
