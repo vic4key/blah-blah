@@ -29,14 +29,16 @@ number_of_images_to_use = None
 # number_of_images_to_use = 5
 # number_of_images_to_use = max(list_image_count_in_usable_series)
 
-file_dir = R"path\to\folder\dicom-4d-series\Data-4DCT\4DCT2\Case2"
+file_dir = R"path\to\folder\contains\list\image\series"
 # file_dir = R"path\to\folder\dicom-4d-series\Data-4DCT\Verona"
 # file_dir = R"path\to\folder\dicom-4d-series\DICOM\Xijing Site"
+# file_dir = R"path\to\folder\dicom-4d-series\DICOM\Xijing Site"
 
-report_name = "Case2"
+report_name = None
 # report_name = "20190419_4DCT Data_4DCT"
 # report_name = "Verona"
 # report_name = "Xijing Site"
+if report_name is None: report_name = os.path.basename(file_dir)
 
 
 
@@ -47,11 +49,11 @@ def fn_sort(ds):
         return ds[0x0020, 0x1041].value
     elif [0x0020, 0x0032] in ds: # Image Position
         return float(ds[0x0020, 0x0032][2])
-    raise "missing field for sorting by z-position"
+    raise RuntimeError(f"missing field for sorting by z-position '{ds.filename}'")
 
 usable_series = []
 usable_series_image_counts = set()
-list_series = vu.load_dicom_directory(file_dir)
+list_series = vu.load_dicom_directory(file_dir, image_only=True)
 for series in list_series.values():
     if not list_image_count_in_usable_series or len(series) in list_image_count_in_usable_series:
         series.sort(key=fn_sort)
@@ -116,5 +118,7 @@ for i in range(0, number_of_images_to_use):
 
 # xls - write to file
 
-vu.write_file(RF"report_{report_name}.xls", lines.encode("utf-8"))
+report_file_path = os.path.join(file_dir, f"report_{report_name}.xls")
+vu.write_file(report_file_path, lines.encode("utf-8"))
+
 print("Done!!")
