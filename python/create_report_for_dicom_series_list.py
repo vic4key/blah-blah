@@ -4,18 +4,22 @@ import PyVutils as vu
 
 # configurations
 
+def fn_default(tag): return str(tag.value)
+
 # list tags to print
 list_tags_to_use = {
-    "Study Instance UID": (0x0020,0x000D),
-    "Series Instance UID": (0x0020,0x000E),
-    "SOP Instance UID": (0x0008,0x0018),
-    "Referenced Image Sequence - Referenced SOP Instance UID": [(0x0008,0x1140), (0x0008,0x1155)],
-    "Source Image Sequence - Referenced SOP Instance UID": [(0x0008,0x2112), (0x0008,0x1155)],
+    # "Study Instance UID": (0x0020,0x000D),
+    # "Series Instance UID": (0x0020,0x000E),
+    # "SOP Instance UID": (0x0008,0x0018),
+    # "Referenced Image Sequence - Referenced SOP Instance UID": [(0x0008,0x1140), (0x0008,0x1155)],
+    # "Source Image Sequence - Referenced SOP Instance UID": [(0x0008,0x2112), (0x0008,0x1155)],
     "Slice Location": (0x0020,0x1041),
-    "Series Time": (0x0008,0x0031),
-    "Content Date": (0x0008,0x0023),
-    "Content Time": (0x0008,0x0033),
-    "Acquisition DateTime": (0x0008,0x002A),
+    "Image Position": (0x0020, 0x0032, lambda tag: "%.3f" % tag.value[1]),
+    # "Series Time": (0x0008,0x0031),
+    # "Content Date": (0x0008,0x0023),
+    # "Content Time": (0x0008,0x0033),
+    # "Acquisition DateTime": (0x0008,0x002A),
+    # "Image Orientation": (0x0020, 0x0037),
 }
 
 # filter series to print list by its number of images
@@ -89,6 +93,7 @@ lines += "\n"
 for i in range(0, number_of_images_to_use):
     for j, tag in enumerate(list_tags_to_use.values()):
         tag_name = list(list_tags_to_use.keys())[j]
+        fn = fn_default
         line  = f"\nIMAGE #{i + 1}\n" if j == 0 else ""
         line += f"{tag_name}\t"
         for series in usable_series:
@@ -108,10 +113,11 @@ for i in range(0, number_of_images_to_use):
                 if type(tag) is list: # sequence
                     _1, _2 = tag[0]
                     group, element = tag[1]
-                    line += str(series[i][_1,_2][0][group, element].value)
+                    line += fn(series[i][_1,_2][0][group, element])
                 else:
-                    group, element = tag
-                    line += str(series[i][group, element].value)
+                    if len(tag) == 3: group, element, fn = tag
+                    else: group, element = tag
+                    line += fn(series[i][group, element])
             except: pass # print(f"No tag '{str(tag)} - {tag_name}' in '{series[i].filename}'")
             line += "\t"
         lines += f"{line}\n"
