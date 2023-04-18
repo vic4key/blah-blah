@@ -1,5 +1,5 @@
 import sys
-from PyVutils import DCM, Others
+import PyVutils as vu
 import numpy as np
 
 from mpl_toolkits import mplot3d
@@ -30,8 +30,8 @@ def fn_draw_contour(ax, points):
 	return
 
 def main():
-
-	DS = DCM.Load(R"data\RT_Structure_Set_Storage_Brain___.DCM")
+	file_path = R"path\to\rt_struct\dicom\file"
+	DS = vu.load_dicom(file_path)
 
 	volume = DS[0x3006, 0x0039][0]
 	contours = volume[0x3006, 0x0040]
@@ -40,13 +40,13 @@ def main():
 	list_contour_points = []
 
 	for contour in contours:
-	    npoints = contour[0x3006, 0x0046].value
-	    lpoints = contour[0x3006, 0x0050].value
+		npoints = contour[0x3006, 0x0046].value
+		lpoints = contour[0x3006, 0x0050].value
 
-	    points = np.reshape(np.array(lpoints), (-1, 3))
+		points = np.reshape(np.array(lpoints), (-1, 3))
 
-	    list_contour_points.append(points)
-	    list_points = np.concatenate((list_points, points))
+		list_contour_points.append(points)
+		list_points = np.concatenate((list_points, points))
 
 	# print(list_points)
 
@@ -59,7 +59,7 @@ def main():
 	ax.set_ylabel("Y")
 	ax.set_zlabel("Z")
 	ax.set_title("3D Contour")
-	ax.set_aspect(1) # ax.axes.set_aspect("equal")
+	ax.axes.set_aspect("auto")
 
 	for contour_points in list_contour_points: fn_draw_contour(ax, contour_points)
 	# ax.scatter3D(Xs, Ys, Zs)
@@ -79,5 +79,5 @@ def main():
 
 if __name__ == "__main__":
 	try: main()
-	except (Exception, KeyboardInterrupt): Others.LogException(sys.exc_info())
+	except (Exception, KeyboardInterrupt): vu.log_exception(sys.exc_info())
 	sys.exit()
