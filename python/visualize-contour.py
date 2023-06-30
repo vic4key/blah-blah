@@ -1,33 +1,26 @@
 import sys
-import PyVutils as vu
 import numpy as np
+import PyVutils as vu
 
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
 def fn_draw_contour(ax, points):
-
 	Xs, Ys, Zs = points[:,0], points[:,1], points[:,2]
 	ax.plot3D(Xs, Ys, Zs) # c="#00FF00"
-
-
 
 	# XsXs = np.reshape(Xs, -1)
 	# YsYs = np.reshape(Ys, -1)
 	# ZsZs = np.reshape(Zs, -1)
 
-
 	# XsXs, YsYs = np.meshgrid(Xs, Ys)
 	# Zs, _ = np.meshgrid(Zs, Ys)
 	# ax.plot_surface(XsXs, YsYs, ZsZs)
 
-
 	# Zs = np.reshape(Zs, (-1, 2))
 	# Zs = Zs.reshape(Ys.shape)
 	# Zs = Zs.reshape((len(Xs), len(Ys)))
-
-	return
 
 def main():
 	file_path = R"path\to\rt_struct\dicom\file"
@@ -38,16 +31,11 @@ def main():
 
 	list_points = np.empty((0, 3))
 	list_contour_points = []
-
 	for contour in contours:
-		npoints = contour[0x3006, 0x0046].value
 		lpoints = contour[0x3006, 0x0050].value
-
 		points = np.reshape(np.array(lpoints), (-1, 3))
-
 		list_contour_points.append(points)
 		list_points = np.concatenate((list_points, points))
-
 	# print(list_points)
 
 	Xs, Ys, Zs = list_points[:,0], list_points[:,1], list_points[:,2]
@@ -65,7 +53,6 @@ def main():
 	# ax.scatter3D(Xs, Ys, Zs)
 	# ax.plot_surface(Xs, Ys, Zs, cmap='jet')
 
-
 	# Xs, Ys = np.meshgrid(Xs, Ys)
 	# f = lambda x, y: np.sin(np.sqrt(x ** 2 + y ** 2))
 	# Zs = f(Xs, Ys)
@@ -74,8 +61,6 @@ def main():
 	# ax.plot_wireframe(X, Y, Z, color='black')
 
 	plt.show()
-
-	return
 
 if __name__ == "__main__":
 	try: main()
