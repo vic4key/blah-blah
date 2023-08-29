@@ -52,15 +52,16 @@ for file_path in glob.glob(path_dir):
 
   assert rows*cols*3 == data_size, "data size (%dx%d) did not met number of rows and columns" % (rows, cols)
 
-  im = Image.new("RGB", (rows, cols), color_white)
+  # im = Image.new("RGB", (rows, cols), color_white)
+  im = Image.frombytes("RGB", (cols, rows), data)
   print("image = '%s' (%s)" % (file_name, vu.format_bytes(data_size)))
 
-  for row in range(0, rows):
-    for col in range(0, cols):
-      index = row * cols + col
-      r, g, b = data[index:index+3] # 3 bytes for 3 channels r-g-b
-      # r, g, b = (randint(0x00, 0xFF), randint(0x00, 0xFF), randint(0x00, 0xFF))
-      pixel = (r, g, b)
-      im.putpixel((col, row), pixel)
+  # for row in range(0, rows):
+  #   for col in range(0, cols):
+  #     index = row * cols + col
+  #     r, g, b = data[index:index+3] # 3 bytes for 3 channels r-g-b
+  #     # r, g, b = (randint(0x00, 0xFF), randint(0x00, 0xFF), randint(0x00, 0xFF))
+  #     pixel = (r, g, b)
+  #     im.putpixel((col, row), pixel)
 
-  im.save(file_path + ".rgb.png")
+  im.save(file_path + ".png")
