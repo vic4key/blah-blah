@@ -1,4 +1,4 @@
-# nano create-gray-image-by-put-pixel.py & py3 create-gray-image-by-put-pixel.py
+# https://rawpixels.net/
 
 '''
       {
@@ -24,7 +24,7 @@ class SizeType(Enum):
 path_dir = RF"data\imgray\*.bin"
 cols, rows = None, None
 binary = True
-size_type = SizeType.INNAME
+size_type = SizeType.SQUARE
 
 if size_type is SizeType.FIXED:
   assert rows and cols is not None, "missing value for number of rows and columns"
@@ -50,13 +50,13 @@ for file_path in glob.glob(path_dir):
 
   assert rows*cols == data_size, "data size did not met the number of rows and columns"
 
-  im = Image.new("L", (cols, rows), color_black)
+  img = Image.new("L", (cols, rows), color_black)
   print("image = '%s' (%s)" % (file_name, vu.format_bytes(data_size)))
 
   for row in range(0, rows):
     for col in range(0, cols):
       pixel = data[row * cols + col]
       if binary: pixel = color_black if pixel == 0 else color_white
-      im.putpixel((col, row), pixel)
+      img.putpixel((col, row), pixel)
 
-  im.save(file_path + ".gray.png")
+  img.save(file_path + ".gray.png")

@@ -1,4 +1,4 @@
-# nano create-rgb-image-by-put-pixel.py & py3 create-rgb-image-by-put-pixel.py
+# https://rawpixels.net/
 
 '''
       {
@@ -13,7 +13,6 @@
 
 import glob, math
 from PIL import Image
-from random import *
 from enum import Enum
 import PyVutils as vu
 
@@ -52,16 +51,15 @@ for file_path in glob.glob(path_dir):
 
   assert rows*cols*3 == data_size, "data size (%dx%d) did not met number of rows and columns" % (rows, cols)
 
-  # im = Image.new("RGB", (rows, cols), color_white)
-  im = Image.frombytes("RGB", (cols, rows), data)
+  tmp = Image.frombytes("RGB", (cols, rows), data)
+
+  img = Image.new("RGB", (rows, cols), color_white)
   print("image = '%s' (%s)" % (file_name, vu.format_bytes(data_size)))
 
-  # for row in range(0, rows):
-  #   for col in range(0, cols):
-  #     index = row * cols + col
-  #     r, g, b = data[index:index+3] # 3 bytes for 3 channels r-g-b
-  #     # r, g, b = (randint(0x00, 0xFF), randint(0x00, 0xFF), randint(0x00, 0xFF))
-  #     pixel = (r, g, b)
-  #     im.putpixel((col, row), pixel)
+  for row in range(0, rows):
+    for col in range(0, cols):
+      r, g, b = tmp.getpixel((col, row))
+      pixel = (r, g, b)
+      img.putpixel((col, row), pixel)
 
-  im.save(file_path + ".png")
+  img.save(file_path + ".png")
