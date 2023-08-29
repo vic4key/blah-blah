@@ -11,16 +11,22 @@
       }
 '''
 
-import random as rd
-from PIL import Image
 import glob, math
+from PIL import Image
+from enum import Enum
+import PyVutils as vu
+
+class SizeType(Enum):
+  FIXED   = 0, # Eg. The file name must be contained (cols x rows)
+  SQUARE  = 1,
+  INNAME  = 2,
 
 path_dir = RF"data\imgray\*.bin"
-binary = True
 cols, rows = None, None
-square = cols == rows
+binary = True
+size_type = SizeType.INNAME
 
-if not square:
+if size_type is SizeType.FIXED:
   assert rows and cols is not None, "missing value for number of rows and columns"
 
 color_white = 0xFF
@@ -32,14 +38,20 @@ for file_path in glob.glob(path_dir):
   data = f.read()
   f.close()
 
-  if square:
-    size = int(math.sqrt(len(data)))
-    rows, cols = size, size
+  data_size = len(data)
+  file_name = vu.extract_file_name(file_path)
 
-  assert rows*cols == len(data), "data size did not met number of rows and columns"
+  if size_type is SizeType.SQUARE:
+    size = int(math.sqrt(data_size))
+    rows, cols = size, size
+  elif size_type is SizeType.INNAME:
+    s = vu.regex(file_name, "([\d]+)x([\d]+)")[0]
+    cols, rows = int(s[0]), int(s[1])
+
+  assert rows*cols == data_size, "data size did not met the number of rows and columns"
 
   im = Image.new("L", (cols, rows), color_black)
-  print("image =", im, "<%d>" % len(data))
+  print("image = '%s' (%s)" % (file_name, vu.format_bytes(data_size)))
 
   for row in range(0, rows):
     for col in range(0, cols):

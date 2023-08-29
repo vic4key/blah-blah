@@ -2,7 +2,7 @@
 
 '''
       {
-        std::string s = "path\\to\\bla-bla\\python\\data\\imgray\\"
+        std::string s = "path\\to\\bla-bla\\python\\data\\imrgb\\"
         s += "image";
         s += ".bin";
         auto f = fopen(s.c_str(), "wb");
@@ -11,17 +11,23 @@
       }
 '''
 
-import random as rd
+import glob, math
 from PIL import Image
 from random import *
-import glob, math
+from enum import Enum
+import PyVutils as vu
+
+class SizeType(Enum):
+  FIXED   = 0, # Eg. The file name must be contained (cols x rows)
+  SQUARE  = 1,
+  INNAME  = 2,
 
 # input parameter
-path_dir = RF"data\imgray\*.bin"
-square = True
+path_dir = RF"data\imrgb\*.bin"
 cols, rows = None, None # required if `square = False`
+size_type = SizeType.INNAME
 
-if not square:
+if size_type is SizeType.FIXED:
   assert rows and cols is not None, "missing value for number of rows and columns"
 
 color_white = (0xFF, 0xFF, 0xFF)
@@ -33,20 +39,28 @@ for file_path in glob.glob(path_dir):
   data = f.read()
   f.close()
 
-  if square:
-    size = int(math.sqrt(len(data)))
-    rows, cols = size, size
+  data_size = len(data)
+  file_name = vu.extract_file_name(file_path)
+  print(data_size)
 
-  assert rows*cols == len(data), "data size did not met number of rows and columns"
+  if size_type is SizeType.SQUARE:
+    size = int(math.sqrt(data_size))
+    rows, cols = size, size
+  elif size_type is SizeType.INNAME:
+    s = vu.regex(file_name, "([\d]+)x([\d]+)")[0]
+    cols, rows = int(s[0]), int(s[1])
+
+  assert rows*cols*3 == data_size, "data size (%dx%d) did not met number of rows and columns" % (rows, cols)
 
   im = Image.new("RGB", (rows, cols), color_white)
-  print("image =", im, "<%d>" % len(data))
+  print("image = '%s' (%s)" % (file_name, vu.format_bytes(data_size)))
 
   for row in range(0, rows):
     for col in range(0, cols):
-      # pixel = data[row * cols + col] # 3 bytes
-      r, g, b = (randint(0x00, 0xFF), randint(0x00, 0xFF), randint(0x00, 0xFF))
-      color = (r, g, b)
-      im.putpixel((col, row), color)
+      index = row * cols + col
+      r, g, b = data[index:index+3] # 3 bytes for 3 channels r-g-b
+      # r, g, b = (randint(0x00, 0xFF), randint(0x00, 0xFF), randint(0x00, 0xFF))
+      pixel = (r, g, b)
+      im.putpixel((col, row), pixel)
 
   im.save(file_path + ".rgb.png")
