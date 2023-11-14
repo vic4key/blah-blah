@@ -23,14 +23,14 @@ int main()
   std::atomic<int> thread_count = 0;
   std::condition_variable cv;
 
-  // create many worker threads (independency)
+  // create many worker threads
   for (int i = 0; i < num_thread; ++i)
   {
     std::thread([&](int i) -> void
     {
-      vu::_cout_A("worker_thread #", i, " started\n");
+      vu::_cout_A("worker thread #", i, " started\n");
       std::this_thread::sleep_for(seconds(i + 1));
-      vu::_cout_W(L"worker_thread #", i, L" finished\n");
+      vu::_cout_W(L"worker thread #", i, L" finished\n");
 
       thread_count += 1;
       cv.notify_one();
@@ -46,7 +46,7 @@ int main()
   });
 
   duration_t d = clock_t::now() - t;
-  vu::_cout("main_thead waited ", d.count(), " seconds\n");
+  vu::_cout("main thead waited ", d.count(), " seconds\n");
 
   return 0;
 }
