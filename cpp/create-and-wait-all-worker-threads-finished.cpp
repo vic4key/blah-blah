@@ -2,13 +2,16 @@
 // all worker threads will notify to main thread (each thread notify once when it finished its job)
 // when all worker thread finished their jobs, main thread stop waiting and run continue
 
-#include <iostream>
 #include <thread>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
+
 #include <chrono>
+using namespace std::chrono;
 using namespace std::chrono_literals;
+
+#include "_cout.hpp"
 
 int main()
 {
@@ -23,15 +26,15 @@ int main()
   // create many worker threads (independency)
   for (int i = 0; i < num_thread; ++i)
   {
-    std::thread([&]() -> void
+    std::thread([&](int i) -> void
     {
-      std::cout << "worker_thread " << std::this_thread::get_id() << " started\n";
-      std::this_thread::sleep_for(5s); // each worker thread run in 5s
-      std::cout << "worker_thread " << std::this_thread::get_id() << " finished\n";
+      vu::_cout_A("worker_thread #", i, " started\n");
+      std::this_thread::sleep_for(seconds(i + 1));
+      vu::_cout_W(L"worker_thread #", i, L" finished\n");
 
       thread_count += 1;
       cv.notify_one();
-    }).detach(); // detach the worker thread from main thread to don't wait it running
+    }, i).detach(); // detach the worker thread from main thread to don't wait it running
   }
 
   // main thread waiting for all worker threads are finished
@@ -43,7 +46,7 @@ int main()
   });
 
   duration_t d = clock_t::now() - t;
-  std::cout << "time = " << d.count() << " seconds" << std::endl;
+  vu::_cout("main_thead waited ", d.count(), " seconds\n");
 
   return 0;
 }
