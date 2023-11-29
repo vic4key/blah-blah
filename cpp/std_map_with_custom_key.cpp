@@ -14,7 +14,6 @@ struct MyKey
         return value < right.value;
     }
 
-public:
     int value;
 };
 
