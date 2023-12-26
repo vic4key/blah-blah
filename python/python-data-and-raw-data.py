@@ -55,11 +55,13 @@ user32 = ctypes.CDLL(ctypes.util.find_library("user32"))
 temp_1 = user32.MessageBoxA # <class 'ctypes.CDLL.__init__.<locals>._FuncPtr'>
 print("Python Object (_FuncPtr):", temp_1)
 
-temp_2 = ctypes.cast(ctypes.byref(temp_1), ctypes.POINTER(ctypes.c_void_p)) # <class 'LP_c_void_p'>     Eg. void* temp_2 = &MessageBoxA
-print("Python Object (LP_c_void_p):", temp_2)
+temp_2 = ctypes.byref(temp_1) # <class 'CArgObject'> # Convert Python variable to Python pointer
 
-temp_3 = temp_2.contents.value # <class 'int'>      Eg. auto temp_3 = *temp_2;
-print("Raw Function Pointer of `MessageBoxA` at", hex(temp_3))
+temp_3 = ctypes.cast(temp_2, ctypes.POINTER(ctypes.c_void_p)) # <class 'LP_c_void_p'>   Cast Python pointer to C pointer (Eg. void* temp_3 = &temp_1)
+print("Python Object (LP_c_void_p):", temp_3)
+
+temp_4 = temp_3.contents.value # <class 'int'>  Get C pointer to C value (Eg. int temp_4 = *temp_3)
+print("Raw Function Pointer of `MessageBoxA` at", hex(temp_4))
 
 '''
 Python Object (_FuncPtr): <_FuncPtr object at 0x00000141381C8D48>
@@ -72,5 +74,5 @@ MessageBoxA_C_Prototype = ctypes.CFUNCTYPE( # <class '_ctypes.PyCFuncPtrType'>
     ctypes.c_int, # return
     ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong # arguments
 )
-MessageBoxA = MessageBoxA_C_Prototype(temp_3) # <class 'ctypes.CFUNCTYPE.<locals>.CFunctionType'> # Cast raw-address to Python ctypes 
+MessageBoxA = MessageBoxA_C_Prototype(temp_4) # <class 'ctypes.CFUNCTYPE.<locals>.CFunctionType'> # Cast raw-address to Python ctypes 
 MessageBoxA(0, b"text", b"title", 0) # Invoke the function
