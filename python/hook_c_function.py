@@ -14,14 +14,6 @@ class mem_t:
     def __bytes__(self) -> bytes: return bytes(self.data)
     def __len__(self) -> int: return self.size
 
-@dataclass
-class jmp_t: # 64-bit
-    inst: bytes = bytes([0xFF, 0x25, 0x00, 0x00, 0x00, 0x00])   # jmp qword ptr ds:[rip]
-    addr: bytes = bytes([0] * 8)                                # <8 bytes address>
-    def __init__(self, address: int = 0): import struct; self.addr = struct.pack("Q", address)
-    def __bytes__(self) -> bytes: return self.inst + self.addr
-    def __len__(self) -> int: return 14
-
 def mem_allocate(size: int) -> mem_t:
     '''
     Allocate a data block
@@ -69,16 +61,13 @@ def mem_read(ptr: ctypes.c_void_p, size: int) -> bytes:
     # return read data
     return bytes(mem)
 
-# @refer to `export_c_function.cpp`
-
-import os
-file_dir  = os.path.dirname(os.path.abspath(__file__))
-os.environ["PATH"] += os.pathsep + file_dir
-
-dll = ctypes.CDLL(ctypes.util.find_library("export_c_function.dll"))
-# print(dll)
-# print(dll.print_message)
-# print(dll.c_invoke_print_message)
+@dataclass
+class jmp_t: # 64-bit
+    inst: bytes = bytes([0xFF, 0x25, 0x00, 0x00, 0x00, 0x00])   # jmp qword ptr ds:[rip]
+    addr: bytes = bytes([0] * 8)                                # <8 bytes address>
+    def __init__(self, address: int = 0): import struct; self.addr = struct.pack("Q", address)
+    def __bytes__(self) -> bytes: return self.inst + self.addr
+    def __len__(self) -> int: return 14
 
 # allocate trampoline
 JUMP_SIZE = len(jmp_t())
@@ -110,6 +99,19 @@ def install_inline_hooking(c_function, py_function):
     temp = bytes(jmp_t(pfn_c_hk_print_message.contents.value))
     mem_write(pfn_c_print_message.contents, temp)
     # print(binascii.hexlify(temp))
+
+
+
+# @refer to `export_c_function.cpp`
+
+import os
+file_dir  = os.path.dirname(os.path.abspath(__file__))
+os.environ["PATH"] += os.pathsep + file_dir
+
+dll = ctypes.CDLL(ctypes.util.find_library("export_c_function.dll"))
+# print(dll)
+# print(dll.print_message)
+# print(dll.c_invoke_print_message)
 
 install_inline_hooking(dll.print_message, hk_print_message)
 
