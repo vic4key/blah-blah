@@ -113,19 +113,26 @@ def install_inline_hooking(c_function, py_function):
 
 # @refer to `export_c_function.cpp`
 
-import os
-file_dir  = os.path.dirname(os.path.abspath(__file__))
-os.environ["PATH"] += os.pathsep + file_dir
+def load_shared_library(file_name_without_extension):
+    '''
+    Load a shared library
+    '''
+    import os, platform
+    platform_shared_exts = { "Windows": ".dll", "Linux": ".so", "Darwin": ".dylib" }
+    file_ext  = platform_shared_exts.get(platform.system())
+    file_dir  = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(file_dir, file_name_without_extension + file_ext)
+    return ctypes.CDLL(file_path)
 
-dll = ctypes.CDLL(ctypes.util.find_library("export_c_function.dll"))
-# print(dll)
-# print(dll.print_message)
-# print(dll.c_invoke_print_message)
+lib = load_shared_library("export_c_function")
+# print(lib)
+# print(lib.print_message)
+# print(lib.c_invoke_print_message)
 
-install_inline_hooking(dll.print_message, hk_print_message)
+install_inline_hooking(lib.print_message, hk_print_message)
 
-dll.print_message(b"This is a string from Python code")
-dll.c_invoke_print_message()
+lib.print_message(b"This is a string from Python code")
+lib.c_invoke_print_message()
 
 '''
 Invoked `hk_print_message('This is a string from Python code')`

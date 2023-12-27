@@ -1,8 +1,17 @@
+// Windows: cl /LD /02 /MT /Fe:export_c_function.dll export_c_function.cpp
+// Linux:   g++ -shared -o export_c_function.so export_c_function.cpp
+
 #include <stdio.h>
+
+#if defined(_MSC_VER)
+#define EXPORT __declspec(dllexport)
+#elif defined(__GNUC__)
+#define EXPORT __attribute__((visibility("default")))
+#endif
 
 #pragma optimize("", off)
 
-extern "C" __declspec(dllexport) void change_ptr_var(int* pvar)
+extern "C" EXPORT void change_ptr_var(int* pvar)
 {
   if (pvar != nullptr)
   {
@@ -10,17 +19,17 @@ extern "C" __declspec(dllexport) void change_ptr_var(int* pvar)
   }
 }
 
-extern "C" __declspec(dllexport) void change_ref_var(int& var)
+extern "C" EXPORT void change_ref_var(int& var)
 {
   var = 456;
 }
 
-extern "C" __declspec(dllexport) void print_message(const char* message)
+extern "C" EXPORT void print_message(const char* message)
 {
   printf("%s\n", message);
 }
 
-extern "C" __declspec(dllexport) void c_invoke_print_message()
+extern "C" EXPORT void c_invoke_print_message()
 {
   print_message("This is a string from C code");
 }
