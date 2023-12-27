@@ -1,8 +1,7 @@
-import sys
-import platform
+import os, sys, platform
 
-import platform
-POSIX = platform.system() in ["Linux"]
+POSIX = platform.system() in ["Linux", "Darwin"]
+PLATFORM_SHARED_EXTENSION = { "Windows": ".dll", "Linux": ".so", "Darwin": ".dylib" }
 
 def _ifdef_decorator_impl(plat, func, frame):
     if platform.system() == plat:
@@ -24,3 +23,13 @@ def linux(func):
 
 def macos(func):
     return _ifdef_decorator_impl('Darwin', func, sys._getframe().f_back)
+
+def load_shared_library(file_name_without_extension):
+    '''
+    Load a shared library
+    '''
+    file_ext  = PLATFORM_SHARED_EXTENSION.get(platform.system())
+    file_dir  = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(file_dir, file_name_without_extension + file_ext)
+    from ctypes import CDLL
+    return CDLL(file_path)
