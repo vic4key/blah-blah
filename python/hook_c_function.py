@@ -2,8 +2,18 @@ from __future__ import annotations
 import ctypes, ctypes.util
 from dataclasses import dataclass
 
+from os_spec import *
+
 PAGE_EXECUTE_READ      = 0x20
 PAGE_EXECUTE_READWRITE = 0x40
+
+if POSIX:
+    PROT_NONE  = 0
+    PROT_READ  = 1
+    PROT_WRITE = 2
+    PROT_EXEC  = 4
+    PAGE_EXECUTE_READ = PROT_EXEC | PROT_READ
+    PAGE_EXECUTE_READWRITE = PAGE_EXECUTE_READ | PROT_WRITE
 
 @dataclass
 class mem_t:
@@ -22,6 +32,7 @@ def mem_allocate(size: int) -> mem_t:
     ptr = ctypes.pointer(ctypes.c_void_p(ctypes.addressof(mem)))
     return mem_t(ptr, size, mem)
 
+@windows
 def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
     '''
     Set memory protection of a region of memory
@@ -31,6 +42,26 @@ def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
     ret = kernel32.VirtualProtect(ptr, size, protection, ctypes.byref(previous_protection))
     assert ret != 0, "set memory protection failed"
     return previous_protection.value
+
+@linux
+def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
+    '''
+    Set memory protection of a region of memory
+    '''
+    PAGE_SIZE = 0x1000
+    # align on a page boundary 
+    addr = ptr.value
+    mem_addr = addr & ~(PAGE_SIZE - 1)
+    mem_end  = (addr + size) & ~(PAGE_SIZE - 1)
+    if (addr + size) > mem_end: mem_end += PAGE_SIZE
+    mem_len = mem_end - mem_addr
+    ptr  = ctypes.c_void_p(mem_addr)
+    size = mem_len
+    # set protection to aligned page boundary
+    libc = ctypes.CDLL(ctypes.util.find_library("libc"))
+    ret = libc.mprotect(ptr, size, protection)
+    assert ret == 0, "set memory protection failed"
+    return protection # TODO: return previous memory protection
 
 def mem_write(ptr: ctypes.c_void_p, data: str | bytes):
     '''
@@ -112,17 +143,6 @@ def install_inline_hooking(c_function, py_function):
 
 
 # @refer to `export_c_function.cpp`
-
-def load_shared_library(file_name_without_extension):
-    '''
-    Load a shared library
-    '''
-    import os, platform
-    platform_shared_exts = { "Windows": ".dll", "Linux": ".so", "Darwin": ".dylib" }
-    file_ext  = platform_shared_exts.get(platform.system())
-    file_dir  = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(file_dir, file_name_without_extension + file_ext)
-    return ctypes.CDLL(file_path)
 
 lib = load_shared_library("export_c_function")
 # print(lib)
