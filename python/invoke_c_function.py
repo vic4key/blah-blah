@@ -1,17 +1,8 @@
 import ctypes, ctypes.util
 
-# @refer to `export_c_function.cpp`
+from os_spec import *
 
-def load_shared_library(file_name_without_extension):
-    '''
-    Load a shared library
-    '''
-    import os, platform
-    platform_shared_exts = { "Windows": ".dll", "Linux": ".so", "Darwin": ".dylib" }
-    file_ext  = platform_shared_exts.get(platform.system())
-    file_dir  = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(file_dir, file_name_without_extension + file_ext)
-    return ctypes.CDLL(file_path)
+# @refer to `export_c_function.cpp`
 
 lib = load_shared_library("export_c_function")
 # print(lib)
