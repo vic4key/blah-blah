@@ -29,7 +29,6 @@ lib.change_ref_var(ctypes.byref(var))
 print(var.value)
 
 '''
-<CDLL 'export_c_function.dll', handle 7ffd4f9b0000 at 0x1d406f3c788>
 123
 456
 '''
