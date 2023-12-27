@@ -80,8 +80,10 @@ dll = ctypes.CDLL(ctypes.util.find_library("export_c_function.dll"))
 # print(dll.print_message)
 # print(dll.c_invoke_print_message)
 
+# allocate trampoline
 JUMP_SIZE = len(jmp_t())
 trampoline = mem_allocate(2*JUMP_SIZE)
+mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
 @ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 def hk_print_message(message):
@@ -102,13 +104,12 @@ def install_inline_hooking(c_function, py_function):
     temp  = mem_read(pfn_c_print_message.contents, JUMP_SIZE)
     temp += bytes(jmp_t(pfn_c_print_message.contents.value + JUMP_SIZE))
     mem_write(trampoline.addr.contents, temp)
-    mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
-    # print(binascii.hexlify(bytes(trampoline)))
+    # print(binascii.hexlify(temp))
 
     # write jump instruction to the beginning of the function
     temp = bytes(jmp_t(pfn_c_hk_print_message.contents.value))
     mem_write(pfn_c_print_message.contents, temp)
-    # print(binascii.hexlify(tramp))
+    # print(binascii.hexlify(temp))
 
 install_inline_hooking(dll.print_message, hk_print_message)
 
