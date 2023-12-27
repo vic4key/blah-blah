@@ -82,6 +82,7 @@ JUMP_SIZE = len(jmp_t())
 trampoline = mem_allocate(2*JUMP_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
+# The C prototype of the `print_message` function
 print_message_C_Prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 
 @print_message_C_Prototype
