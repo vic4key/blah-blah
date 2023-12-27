@@ -3,7 +3,7 @@ import ctypes, ctypes.util
 # @refer to `export_c_function.cpp`
 
 import os
-file_dir = os.path.dirname(os.path.abspath(__file__))
+file_dir  = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(file_dir, "export_c_function.dll")
 dll = ctypes.CDLL(ctypes.util.find_library(file_path))
 print(dll)
