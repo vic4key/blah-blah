@@ -31,6 +31,16 @@ print(var.value)
 
 
 
+dll.print_message(b"This is a string from Python code")
+dll.c_invoke_print_message()
+
+'''
+This is a string from Python code
+This is a string from C code
+'''
+
+
+
 # invoke a python function with c syntax
 
 @ctypes.CFUNCTYPE(None, ctypes.c_char_p)
@@ -42,3 +52,7 @@ pfn_c_print_message = ctypes.cast(ctypes.byref(print_message), ctypes.POINTER(ct
 print_message_c_prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 c_print_message = print_message_c_prototype(pfn_c_print_message.contents.value)
 c_print_message(b"This is a string from Python code with C syntax")
+
+'''
+Invoked `print_message('This is a string from Python code with C syntax')`
+'''
