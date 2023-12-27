@@ -103,7 +103,7 @@ def install_inline_hooking(c_function, py_function):
     temp += bytes(jmp_t(pfn_c_print_message.contents.value + JUMP_SIZE))
     mem_write(trampoline.addr.contents, temp)
     mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
-    # print(binascii.hexlify(code_cave.data))
+    # print(binascii.hexlify(bytes(trampoline)))
 
     # write jump instruction to the beginning of the function
     temp = bytes(jmp_t(pfn_c_hk_print_message.contents.value))
