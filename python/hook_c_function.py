@@ -82,13 +82,13 @@ JUMP_SIZE = len(jmp_t())
 trampoline = mem_allocate(2*JUMP_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
-@ctypes.CFUNCTYPE(None, ctypes.c_char_p)
-def hk_print_message(message):
-    msg = message.decode('utf-8')
-    message = f"Invoked `hk_print_message('{msg}')`"
+print_message_C_Prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 
-    print_message_c_prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
-    c_print_message = print_message_c_prototype(trampoline.addr.contents.value)
+@print_message_C_Prototype
+def hk_print_message(message):
+    message = f"Invoked `hk_print_message('{message.decode('utf-8')}')`"
+    # invoke the original function
+    c_print_message = print_message_C_Prototype(trampoline.addr.contents.value)
     c_print_message(message.encode())
 
 def install_inline_hooking(c_function, py_function):
