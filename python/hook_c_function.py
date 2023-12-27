@@ -1,7 +1,6 @@
 from __future__ import annotations
 import ctypes, ctypes.util
 from dataclasses import dataclass
-import binascii
 
 PAGE_EXECUTE_READ      = 0x20
 PAGE_EXECUTE_READWRITE = 0x40
@@ -61,6 +60,15 @@ def mem_read(ptr: ctypes.c_void_p, size: int) -> bytes:
     # return read data
     return bytes(mem)
 
+
+
+def print_hexlify(data):
+    import binascii
+    if type(data) is bytes: print(binascii.hexlify(data))
+    elif type(data) is str: print(binascii.hexlify(data.encode()))
+    elif type(data) is int: print("0x%016X" % data)
+    else: assert False, "unknown data"
+
 @dataclass
 class jmp_t: # 64-bit
     inst: bytes = bytes([0xFF, 0x25, 0x00, 0x00, 0x00, 0x00])   # jmp qword ptr ds:[rip]
@@ -86,19 +94,19 @@ def hk_print_message(message):
 def install_inline_hooking(c_function, py_function):
     pfn_c_print_message = ctypes.cast(ctypes.byref(c_function), ctypes.POINTER(ctypes.c_void_p))     # hold the actual address of `print_message` in memory
     pfn_c_hk_print_message = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p)) # hold the actual address of `hk_print_message` in memory
-    # print(hex(pfn_c_print_message.contents.value))
-    # print(hex(pfn_c_hk_print_message.contents.value))
+    # print_hexlify(pfn_c_print_message.contents.value)
+    # print_hexlify(pfn_c_hk_print_message.contents.value)
 
     # create trampoline from the beginning of the function
     temp  = mem_read(pfn_c_print_message.contents, JUMP_SIZE)
     temp += bytes(jmp_t(pfn_c_print_message.contents.value + JUMP_SIZE))
     mem_write(trampoline.addr.contents, temp)
-    # print(binascii.hexlify(temp))
+    # print_hexlify(temp)
 
     # write jump instruction to the beginning of the function
     temp = bytes(jmp_t(pfn_c_hk_print_message.contents.value))
     mem_write(pfn_c_print_message.contents, temp)
-    # print(binascii.hexlify(temp))
+    # print_hexlify(temp)
 
 
 
