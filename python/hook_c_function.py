@@ -13,7 +13,7 @@ if POSIX: # linux memory protection
     PAGE_NOACCESS           = PROT_NONE
     PAGE_READONLY           = PROT_READ
     PAGE_READWRITE          = PROT_READ | PROT_WRITE
-    PAGE_EXECUTE_READ       = PROT_EXEC | PAGE_READWRITE
+    PAGE_EXECUTE_READ       = PROT_EXEC | PROT_READ
     PAGE_EXECUTE_READWRITE  = PAGE_EXECUTE_READ | PROT_WRITE
 else: # windows memory protection
     PAGE_NOACCESS           = 0x01
