@@ -219,13 +219,14 @@ class PyHooking:
         e = self.__hooked_functions.get(self.func_t(c_function))
         assert e != None, "cannot invoke - the function was not hooked"
         fn = e["prototype"](e["trampoline"].addr.contents.value)
-        fn(*args)
+        ret = fn(*args)
+        if not ret is None: return ret
 
 
 
-# @refer to `export_c_function.cpp`
+# Demo with `export_c_function.print_message`
 
-lib = load_shared_library("export_c_function")
+lib = load_shared_library("export_c_function") # @refer to `export_c_function.cpp`
 # print(lib)
 # print(lib.print_message)
 # print(lib.c_invoke_print_message)
@@ -249,3 +250,20 @@ lib.c_invoke_print_message()
 Invoked `hk_print_message('This is a string from Python code')`
 Invoked `hk_print_message('This is a string from C code')`
 '''
+
+
+
+# Demo with `user32.MessageBoxA`
+
+user32 = ctypes.CDLL(ctypes.util.find_library("user32"))
+
+@PyHooking.CPrototype(ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong))
+def hk_MessageBoxA(hWnd, lpText, lpCaption, uType):
+    lpText = f"Invoked `hk_MessageBoxA({hWnd}, '{lpText.decode('utf-8')}', '{lpCaption.decode('utf-8')}', {uType})`"
+    return PyHooking().invoke(user32.MessageBoxA, hWnd, lpText.encode(), lpCaption, uType)
+
+PyHooking().hook(user32.MessageBoxA, hk_MessageBoxA)
+user32.MessageBoxA(0, b"text 1", b"", 0)
+
+PyHooking().unhook(user32.MessageBoxA)
+user32.MessageBoxA(0, b"text 2", b"", 0)
