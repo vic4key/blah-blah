@@ -123,6 +123,8 @@ def print_hexlify(data):
     elif type(data) is int: print("0x%016X" % data)
     else: assert False, "unknown data"
 
+
+
 class PyHooking:
     '''
     Python Hooking
@@ -156,11 +158,15 @@ class PyHooking:
         return cls.__instance
 
     def hook(self, c_function, c_prototype, py_function):
+        '''
+        Hook a function
+        '''
         pfn_c_function  = ctypes.cast(ctypes.byref(c_function),  ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `c_function`  in memory
         pfn_py_function = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `py_function` in memory
         # print_hexlify(pfn_c_function.contents.value)
         # print_hexlify(pfn_py_function.contents.value)
 
+        # allocate memory for trampoline
         trampoline = mem_allocate(self.JUMP_SIZE + self.FREE_SIZE)
         mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
@@ -177,13 +183,34 @@ class PyHooking:
         mem_write(pfn_c_function.contents, temp)
         # print_hexlify(temp)
 
+        # store the hooked function to the list
         self.__hooked_functions[self.func_t(c_function)] = {
             "prototype": c_prototype,
             "trampoline" : trampoline,
         }
 
+    def unhook(self, c_function):
+        '''
+        Unhook a hooked function
+        '''
+        e = self.__hooked_functions.get(self.func_t(c_function))
+        assert e != None, "cannot unhook - the function was not hooked"
+
+        # restore instructions in the beginning of the function
+        pfn_c_function = ctypes.cast(ctypes.byref(c_function),  ctypes.POINTER(ctypes.c_void_p))
+        temp = bytes(e["trampoline"])[0:self.JUMP_SIZE]
+        mem_write(pfn_c_function.contents, temp)
+        # print_hexlify(temp)
+
+        # remove the hooked function to the list
+        self.__hooked_functions.pop(self.func_t(c_function))
+
     def invoke(self, c_function, *args):
-        e = self.__hooked_functions[self.func_t(c_function)]
+        '''
+        Invoke the original function
+        '''
+        e = self.__hooked_functions.get(self.func_t(c_function))
+        assert e != None, "cannot invoke - the function was not hooked"
         fn = e["prototype"](e["trampoline"].addr.contents.value)
         fn(*args)
 
@@ -205,6 +232,11 @@ def hk_print_message(message):
     PyHooking().invoke(lib.print_message, message.encode())
 
 PyHooking().hook(lib.print_message, print_message_c_prototype, hk_print_message)
+
+lib.print_message(b"This is a string from Python code")
+lib.c_invoke_print_message()
+
+PyHooking().unhook(lib.print_message)
 
 lib.print_message(b"This is a string from Python code")
 lib.c_invoke_print_message()
