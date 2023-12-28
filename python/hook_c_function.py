@@ -49,7 +49,7 @@ def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
     ptr  = ctypes.c_void_p(mem_addr)
     size = mem_len
     # set protection to aligned page boundary
-    libc = ctypes.CDLL(ctypes.util.find_library("libc"))
+    libc = ctypes.CDLL(ctypes.util.find_library("c"))
     ret = libc.mprotect(ptr, size, protection)
     assert ret == 0, "set memory protection failed"
     return protection # TODO: return previous memory protection
@@ -118,7 +118,8 @@ class jmp_t: # 64-bit
 
 # allocate trampoline
 JUMP_SIZE  = len(jmp_t())
-trampoline = mem_allocate(2*JUMP_SIZE)
+INST_SIZE  = JUMP_SIZE + 0
+trampoline = mem_allocate(INST_SIZE + JUMP_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
 # The C prototype of the `print_message` function
@@ -138,8 +139,8 @@ def install_inline_hooking(c_function, py_function):
     # print_hexlify(pfn_c_hk_print_message.contents.value)
 
     # create trampoline from the beginning of the function
-    temp  = mem_read(pfn_c_print_message.contents, JUMP_SIZE)
-    temp += bytes(jmp_t(pfn_c_print_message.contents.value + JUMP_SIZE))
+    temp  = mem_read(pfn_c_print_message.contents, INST_SIZE)
+    temp += bytes(jmp_t(pfn_c_print_message.contents.value + len(temp)))
     mem_write(trampoline.addr.contents, temp)
     # print_hexlify(temp)
 
