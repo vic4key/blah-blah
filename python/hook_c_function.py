@@ -4,33 +4,24 @@ from dataclasses import dataclass
 
 from os_spec import *
 
-PAGE_EXECUTE_READ      = 0x20
-PAGE_EXECUTE_READWRITE = 0x40
-
-if POSIX:
+if POSIX: # linux memory protection
     PROT_NONE  = 0
     PROT_READ  = 1
     PROT_WRITE = 2
     PROT_EXEC  = 4
-    PAGE_EXECUTE_READ = PROT_EXEC | PROT_READ
-    PAGE_EXECUTE_READWRITE = PAGE_EXECUTE_READ | PROT_WRITE
-
-@dataclass
-class mem_t:
-    addr: None
-    size: None
-    data: None
-    def __bytes__(self) -> bytes: return bytes(self.data)
-    def __len__(self) -> int: return self.size
-
-def mem_allocate(size: int) -> mem_t:
-    '''
-    Allocate a data block
-    '''
-    c_mem_allocator = ctypes.c_uint8 * size
-    mem = c_mem_allocator()
-    ptr = ctypes.pointer(ctypes.c_void_p(ctypes.addressof(mem)))
-    return mem_t(ptr, size, mem)
+    # wrapper for linux
+    PAGE_NOACCESS           = PROT_NONE
+    PAGE_READONLY           = PROT_READ
+    PAGE_READWRITE          = PROT_READ | PROT_WRITE
+    PAGE_EXECUTE_READ       = PROT_EXEC | PAGE_READWRITE
+    PAGE_EXECUTE_READWRITE  = PAGE_EXECUTE_READ | PROT_WRITE
+else: # windows memory protection
+    PAGE_NOACCESS           = 0x01
+    PAGE_READONLY           = 0x02
+    PAGE_READWRITE          = 0x04
+    PAGE_EXECUTE            = 0x10
+    PAGE_EXECUTE_READ       = 0x20
+    PAGE_EXECUTE_READWRITE  = 0x40
 
 @windows
 def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
@@ -62,6 +53,23 @@ def mem_protect(ptr: ctypes.c_void_p, size: int, protection: int) -> int | None:
     ret = libc.mprotect(ptr, size, protection)
     assert ret == 0, "set memory protection failed"
     return protection # TODO: return previous memory protection
+
+@dataclass
+class mem_t:
+    addr: None
+    size: None
+    data: None
+    def __bytes__(self) -> bytes: return bytes(self.data)
+    def __len__(self) -> int: return self.size
+
+def mem_allocate(size: int) -> mem_t:
+    '''
+    Allocate a data block
+    '''
+    c_mem_allocator = ctypes.c_uint8 * size
+    mem = c_mem_allocator()
+    ptr = ctypes.pointer(ctypes.c_void_p(ctypes.addressof(mem)))
+    return mem_t(ptr, size, mem)
 
 def mem_write(ptr: ctypes.c_void_p, data: str | bytes):
     '''
