@@ -5,6 +5,8 @@ import capstone
 
 from os_spec import *
 
+LIBC = "c" if POSIX else "msvcrt"
+
 if POSIX: # linux memory protection
     PROT_NONE  = 0
     PROT_READ  = 1
@@ -80,8 +82,8 @@ def mem_write(ptr: ctypes.c_void_p, data: str | bytes):
     # change memory protection to writable
     previous_protection = mem_protect(ptr, size, PAGE_EXECUTE_READWRITE)
     # write data block
-    msvcrt = ctypes.CDLL(ctypes.util.find_library("msvcrt"))
-    msvcrt.memcpy(ptr, ctypes.create_string_buffer(data), size)
+    libc = ctypes.CDLL(ctypes.util.find_library(LIBC))
+    libc.memcpy(ptr, ctypes.create_string_buffer(data), size)
     # restore the previous memory protection
     mem_protect(ptr, size, previous_protection)
 
@@ -93,8 +95,8 @@ def mem_read(ptr: ctypes.c_void_p, size: int) -> bytes:
     # change memory protection to readable
     previous_protection = mem_protect(ptr, size, PAGE_EXECUTE_READ)
     # read data block
-    msvcrt = ctypes.CDLL(ctypes.util.find_library("msvcrt"))
-    msvcrt.memcpy(mem.data, ptr, size)
+    libc = ctypes.CDLL(ctypes.util.find_library(LIBC))
+    libc.memcpy(mem.data, ptr, size)
     # restore the previous memory protection
     mem_protect(ptr, size, previous_protection)
     # return read data
