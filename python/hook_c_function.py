@@ -131,35 +131,63 @@ class jmp_t: # 64-bit
     def __bytes__(self) -> bytes: return self.inst + self.addr
     def __len__(self) -> int: return 14
 
-# allocate trampoline
-JUMP_SIZE  = len(jmp_t())
-FREE_SIZE  = 0x100 # reserve for backup instructions
-trampoline = mem_allocate(JUMP_SIZE + FREE_SIZE)
-mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
+class PyHooking:
+    '''
+    Python Hooking
+    '''
 
-def install_inline_hooking(c_function, py_function):
-    pfn_c_function  = ctypes.cast(ctypes.byref(c_function),  ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `c_function`  in memory
-    pfn_py_function = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `py_function` in memory
-    # print_hexlify(pfn_c_function.contents.value)
-    # print_hexlify(pfn_py_function.contents.value)
-
-    # create trampoline from the beginning of the function
+    JUMP_SIZE  = len(jmp_t())
+    FREE_SIZE  = 0x100 # reserve for backup instructions
     MAX_INST_SIZE = 0xF # assume this value for all archs and all modes
-    temp  = mem_read(pfn_c_function.contents, JUMP_SIZE + MAX_INST_SIZE)
-    size_of_backup_instructions = calculate_actual_instruction_sizes(temp, JUMP_SIZE)
-    temp  = temp[0:size_of_backup_instructions]
-    temp += bytes(jmp_t(pfn_c_function.contents.value + len(temp)))
-    mem_write(trampoline.addr.contents, temp)
-    # print_hexlify(temp)
 
-    # write jump instruction to the beginning of the function
-    temp = bytes(jmp_t(pfn_py_function.contents.value))
-    mem_write(pfn_c_function.contents, temp)
-    # print_hexlify(temp)
+    hooked_functions = {}
+   
+    def __init__(self): pass
 
+    @dataclass
+    class func_t:
+        c_function = None
+        def __init__(self, c_function): self.c_function = c_function
+        def __hash__(self):
+            pfn_c_function = ctypes.cast(ctypes.byref(self.c_function),  ctypes.POINTER(ctypes.c_void_p))
+            return hash(pfn_c_function.contents.value)
+
+    def hook(self, c_function, c_prototype, py_function):
+        pfn_c_function  = ctypes.cast(ctypes.byref(c_function),  ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `c_function`  in memory
+        pfn_py_function = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `py_function` in memory
+        # print_hexlify(pfn_c_function.contents.value)
+        # print_hexlify(pfn_py_function.contents.value)
+
+        trampoline = mem_allocate(self.JUMP_SIZE + self.FREE_SIZE)
+        mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
+
+        # create trampoline from the beginning of the function
+        temp  = mem_read(pfn_c_function.contents, self.JUMP_SIZE + self.MAX_INST_SIZE)
+        size_of_backup_instructions = calculate_actual_instruction_sizes(temp, self.JUMP_SIZE)
+        temp  = temp[0:size_of_backup_instructions]
+        temp += bytes(jmp_t(pfn_c_function.contents.value + len(temp)))
+        mem_write(trampoline.addr.contents, temp)
+        # print_hexlify(temp)
+
+        # write jump instruction to the beginning of the function
+        temp = bytes(jmp_t(pfn_py_function.contents.value))
+        mem_write(pfn_c_function.contents, temp)
+        # print_hexlify(temp)
+
+        self.hooked_functions[self.func_t(c_function)] = {
+            "prototype": c_prototype,
+            "trampoline" : trampoline,
+        }
+
+    def invoke(self, c_function, *args):
+        e = self.hooked_functions[self.func_t(c_function)]
+        fn = e["prototype"](e["trampoline"].addr.contents.value)
+        fn(*args)
 
 
 # @refer to `export_c_function.cpp`
+        
+ph = PyHooking()
 
 lib = load_shared_library("export_c_function")
 # print(lib)
@@ -167,16 +195,14 @@ lib = load_shared_library("export_c_function")
 # print(lib.c_invoke_print_message)
 
 # The C prototype of the `print_message` function
-print_message_C_Prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
+print_message_c_prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
 
-@print_message_C_Prototype
+@print_message_c_prototype
 def hk_print_message(message):
     message = f"Invoked `hk_print_message('{message.decode('utf-8')}')`"
-    # invoke the original function
-    c_print_message = print_message_C_Prototype(trampoline.addr.contents.value)
-    c_print_message(message.encode())
+    ph.invoke(lib.print_message, message.encode())
 
-install_inline_hooking(lib.print_message, hk_print_message)
+ph.hook(lib.print_message, print_message_c_prototype, hk_print_message)
 
 lib.print_message(b"This is a string from Python code")
 lib.c_invoke_print_message()
