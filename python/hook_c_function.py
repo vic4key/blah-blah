@@ -137,34 +137,24 @@ FREE_SIZE  = 0x100 # reserve for backup instructions
 trampoline = mem_allocate(JUMP_SIZE + FREE_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
-# The C prototype of the `print_message` function
-print_message_C_Prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
-
-@print_message_C_Prototype
-def hk_print_message(message):
-    message = f"Invoked `hk_print_message('{message.decode('utf-8')}')`"
-    # invoke the original function
-    c_print_message = print_message_C_Prototype(trampoline.addr.contents.value)
-    c_print_message(message.encode())
-
 def install_inline_hooking(c_function, py_function):
-    pfn_c_print_message = ctypes.cast(ctypes.byref(c_function), ctypes.POINTER(ctypes.c_void_p))     # hold the actual address of `print_message` in memory
-    pfn_c_hk_print_message = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p)) # hold the actual address of `hk_print_message` in memory
-    # print_hexlify(pfn_c_print_message.contents.value)
-    # print_hexlify(pfn_c_hk_print_message.contents.value)
+    pfn_c_function  = ctypes.cast(ctypes.byref(c_function),  ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `c_function`  in memory
+    pfn_py_function = ctypes.cast(ctypes.byref(py_function), ctypes.POINTER(ctypes.c_void_p))   # hold the actual address of `py_function` in memory
+    # print_hexlify(pfn_c_function.contents.value)
+    # print_hexlify(pfn_py_function.contents.value)
 
     # create trampoline from the beginning of the function
     MAX_INST_SIZE = 0xF # assume this value for all archs and all modes
-    temp  = mem_read(pfn_c_print_message.contents, JUMP_SIZE + MAX_INST_SIZE)
+    temp  = mem_read(pfn_c_function.contents, JUMP_SIZE + MAX_INST_SIZE)
     size_of_backup_instructions = calculate_actual_instruction_sizes(temp, JUMP_SIZE)
     temp  = temp[0:size_of_backup_instructions]
-    temp += bytes(jmp_t(pfn_c_print_message.contents.value + len(temp)))
+    temp += bytes(jmp_t(pfn_c_function.contents.value + len(temp)))
     mem_write(trampoline.addr.contents, temp)
     # print_hexlify(temp)
 
     # write jump instruction to the beginning of the function
-    temp = bytes(jmp_t(pfn_c_hk_print_message.contents.value))
-    mem_write(pfn_c_print_message.contents, temp)
+    temp = bytes(jmp_t(pfn_py_function.contents.value))
+    mem_write(pfn_c_function.contents, temp)
     # print_hexlify(temp)
 
 
@@ -175,6 +165,16 @@ lib = load_shared_library("export_c_function")
 # print(lib)
 # print(lib.print_message)
 # print(lib.c_invoke_print_message)
+
+# The C prototype of the `print_message` function
+print_message_C_Prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
+
+@print_message_C_Prototype
+def hk_print_message(message):
+    message = f"Invoked `hk_print_message('{message.decode('utf-8')}')`"
+    # invoke the original function
+    c_print_message = print_message_C_Prototype(trampoline.addr.contents.value)
+    c_print_message(message.encode())
 
 install_inline_hooking(lib.print_message, hk_print_message)
 
