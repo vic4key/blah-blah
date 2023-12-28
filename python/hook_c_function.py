@@ -28,7 +28,7 @@ def mem_allocate(size: int) -> mem_t:
     Allocate a data block
     '''
     c_mem_allocator = ctypes.c_uint8 * size
-    mem = c_mem_allocator.from_buffer(bytearray(size), 0)
+    mem = c_mem_allocator()
     ptr = ctypes.pointer(ctypes.c_void_p(ctypes.addressof(mem)))
     return mem_t(ptr, size, mem)
 
@@ -109,7 +109,7 @@ class jmp_t: # 64-bit
     def __len__(self) -> int: return 14
 
 # allocate trampoline
-JUMP_SIZE = len(jmp_t())
+JUMP_SIZE  = len(jmp_t())
 trampoline = mem_allocate(2*JUMP_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
