@@ -1,6 +1,7 @@
 from __future__ import annotations
-import ctypes, ctypes.util
 from dataclasses import dataclass
+import ctypes, ctypes.util
+import capstone
 
 from os_spec import *
 
@@ -101,6 +102,18 @@ def mem_read(ptr: ctypes.c_void_p, size: int) -> bytes:
 
 
 
+def calculate_actual_instruction_sizes(
+        bytes, needed_size, arch = capstone.CS_ARCH_X86, mode = capstone.CS_MODE_64) -> int:
+    '''
+    Calculate the actual size based on disassembled instructions
+    '''
+    result = 0
+    cs = capstone.Cs(arch, mode)
+    for i in cs.disasm(bytes, 0):
+        result += i.size
+        if result >= needed_size: break
+    return result
+
 def print_hexlify(data):
     import binascii
     if type(data) is bytes: print(binascii.hexlify(data))
@@ -118,8 +131,8 @@ class jmp_t: # 64-bit
 
 # allocate trampoline
 JUMP_SIZE  = len(jmp_t())
-INST_SIZE  = JUMP_SIZE + 0
-trampoline = mem_allocate(INST_SIZE + JUMP_SIZE)
+FREE_SIZE  = 0x100 # reserve for backup instructions
+trampoline = mem_allocate(JUMP_SIZE + FREE_SIZE)
 mem_protect(trampoline.addr.contents, len(trampoline), PAGE_EXECUTE_READWRITE)
 
 # The C prototype of the `print_message` function
@@ -139,7 +152,10 @@ def install_inline_hooking(c_function, py_function):
     # print_hexlify(pfn_c_hk_print_message.contents.value)
 
     # create trampoline from the beginning of the function
-    temp  = mem_read(pfn_c_print_message.contents, INST_SIZE)
+    MAX_INST_SIZE = 0xF # assume this value for all archs and all modes
+    temp  = mem_read(pfn_c_print_message.contents, JUMP_SIZE + MAX_INST_SIZE)
+    size_of_backup_instructions = calculate_actual_instruction_sizes(temp, JUMP_SIZE)
+    temp  = temp[0:size_of_backup_instructions]
     temp += bytes(jmp_t(pfn_c_print_message.contents.value + len(temp)))
     mem_write(trampoline.addr.contents, temp)
     # print_hexlify(temp)
