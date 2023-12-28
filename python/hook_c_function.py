@@ -124,7 +124,6 @@ def print_hexlify(data):
     else: assert False, "unknown data"
 
 
-
 class PyHooking:
     '''
     Python Hooking
@@ -146,6 +145,14 @@ class PyHooking:
         def __bytes__(self) -> bytes: return self.inst + self.addr
         def __len__(self) -> int: return 14
 
+    @staticmethod
+    def CPrototype(decorator):
+        def wrapper(f):
+            g = decorator(f)
+            g.decorator = decorator
+            return g
+        return wrapper
+
     JUMP_SIZE  = len(jmp_t())
     FREE_SIZE  = 0x100 # reserve for backup instructions
     MAX_INST_SIZE = 0xF # assume this value for all archs and all modes
@@ -157,7 +164,7 @@ class PyHooking:
         if cls.__instance is None: cls.__instance = super().__new__(cls)
         return cls.__instance
 
-    def hook(self, c_function, c_prototype, py_function):
+    def hook(self, c_function, py_function):
         '''
         Hook a function
         '''
@@ -185,7 +192,7 @@ class PyHooking:
 
         # store the hooked function to the list
         self.__hooked_functions[self.func_t(c_function)] = {
-            "prototype": c_prototype,
+            "prototype": py_function.decorator,
             "trampoline" : trampoline,
         }
 
@@ -223,15 +230,12 @@ lib = load_shared_library("export_c_function")
 # print(lib.print_message)
 # print(lib.c_invoke_print_message)
 
-# The C prototype of the `print_message` function
-print_message_c_prototype = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
-
-@print_message_c_prototype
+@PyHooking.CPrototype(ctypes.CFUNCTYPE(None, ctypes.c_char_p))
 def hk_print_message(message):
     message = f"Invoked `hk_print_message('{message.decode('utf-8')}')`"
     PyHooking().invoke(lib.print_message, message.encode())
 
-PyHooking().hook(lib.print_message, print_message_c_prototype, hk_print_message)
+PyHooking().hook(lib.print_message, hk_print_message)
 
 lib.print_message(b"This is a string from Python code")
 lib.c_invoke_print_message()
