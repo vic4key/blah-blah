@@ -1,3 +1,6 @@
+Operating System & Architectures
+
+
 
 --- CPU architectures
 
@@ -60,6 +63,16 @@ Unix
 
 --- Executable File Format
 
+PE file format supports the following CPU architectures:
+  - x86 (32-bit)
+  - x86-64/AMD64 (64-bit)
+  - IA-64 (Itanium)
+  - ARM   (32-bit)
+  - ARM64 (64-bit)
+  - MIPS
+  - Alpha
+  - PowerPC
+
 ELF file format supports the following CPU architectures:
   - ARM   (32-bit)
   - ARM64 (64-bit)
@@ -75,3 +88,11 @@ Mach-O file format supports the following CPU architectures:
   - x86-64/AMD64 (64-bit)
   - PowerPC   (32-bit)
   - PowerPC64 (64-bit PowerPC)
+
+
+
+--- Definitions
+
+The terms "CPU types" and "CPU architectures" are often used interchangeably, but they do have slightly different meanings.
+  - CPU types also known as instruction set architectures (ISAs), are the specific set of instructions and operations that a CPU can understand and execute. For example, Intel and AMD processors have different ISAs.
+  - CPU architectures refer to the overall design of a CPU, including the organization of its components and how they work together. This includes details such as the number of cores, cache memory, and how data is processed and moved between components.
