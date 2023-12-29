@@ -1,8 +1,8 @@
-OPERATING SYSTEM & CPU ARCHITECTURES
+# OPERATING SYSTEM & CPU ARCHITECTURES
 
 
 
---- CPU Instruction Sets
+## CPU Instruction Sets
 
 All CPU instruction sets are the following:
   - AMD Instruction Sets:
@@ -20,7 +20,7 @@ All CPU instruction sets are the following:
 
 
 
---- CPU Architectures
+## CPU Architectures
 
 All CPU architectures are the following:
   - x86 (32-bit): Commonly used in desktops and laptops.
@@ -39,7 +39,7 @@ All CPU architectures are the following:
 
 
 
---- Operating System
+## Operating System
 
 Windows (Acer, Dell, HP, etc)
   - x86   (32-bit)
@@ -79,7 +79,7 @@ Unix
 
 
 
---- Executable File Format
+## Executable File Format
 
 PE file format supports the following CPU architectures:
   - x86 (32-bit)
@@ -109,7 +109,7 @@ Mach-O file format supports the following CPU architectures:
 
 
 
---- Others
+## Others
 
 The terms "CPU types" and "CPU architectures" are often used interchangeably, but they do have slightly different meanings.
   - CPU types also known as instruction set architectures (ISAs), are the specific set of instructions and operations that a CPU can understand and execute. For example, Intel and AMD processors have different ISAs.
