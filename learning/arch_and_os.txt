@@ -1,0 +1,63 @@
+
+--- CPU Types
+
+All CPU types are the following:
+  - x86 (32-bit) : Intel or AMD. Commonly used in desktops and laptops.
+  - x86-64 (64-bit): Intel or AMD. This is an extension of the x86 instruction set. Commonly used in desktops and laptops.
+  - ARM (32-bit and 64-bit): Commonly used in embedded systems, mobile devices, etc. Eg. ARMv7 and ARMv8 (64-bit).
+  - MIPS (32-bit and 64-bit): Commonly used in older router devices and some embedded systems.
+  - PowerPC (32-bit and 64-bit): Commonly used in older Apple computers and some non-Apple systems.
+  - RISC-V (32-bit and 64-bit): Relatively new open standard that has gained popularity for use in embedded systems and some servers.
+
+*Note: Linux kernel supported all these CPU types.
+
+
+
+--- Operating System
+
+Windows
+  - x86
+  - x64
+  - ARM   (Windows RT)
+  - ARM64 (Windows 10 on ARM64-based devices)
+
+Android (Samsung, LG, etc)
+  - ARM   (Primarily. Almost ARM64 from ARMv8+. Except Nexus One ARMv7)
+  - ARM64 (Primarily. Almost ARM64 from ARMv8+. Except Nexus One ARMv7)
+  - MIPS  (Some old phone. Less common today. Almost No)
+  - x86   (Less common today. Eg. Nokia, etc)
+
+iOS (iPhone, iPad, iPod)
+  - ARM64 (Transitioning from ARM32 to ARM64 from 2013+ that iPhone 5s or later)
+
+Unix
+  - x86
+  - ARM
+  - PowerPC
+  - SPARC
+  - MIPS
+  - PA-RISC
+  - DEC Alpha
+  - Motorola 68000
+  - HP PA-RISC
+  - IA-64
+  - RISC-V
+
+
+
+--- Executable File Format
+
+ELF file format supports the following CPU types:
+  ARM (ARM64)
+  x86 (32-bit)
+  x86-64 (64-bit)
+  MIPS
+  RISC-V
+
+Mach-O file format supports the following CPU types:
+  ARM (ARM32)
+  ARM64 (64-bit ARM)
+  x86 (32-bit)
+  x86-64 (64-bit)
+  PowerPC (32-bit)
+  PowerPC64 (64-bit PowerPC)

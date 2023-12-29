@@ -75,4 +75,34 @@ MessageBoxA_C_Prototype = ctypes.CFUNCTYPE( # <class '_ctypes.PyCFuncPtrType'>
     ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong # arguments
 )
 MessageBoxA = MessageBoxA_C_Prototype(temp_4) # <class 'ctypes.CFUNCTYPE.<locals>.CFunctionType'> # Cast raw-address to Python ctypes 
-MessageBoxA(0, b"text", b"title", 0) # Invoke the function
+# MessageBoxA(0, b"text", b"title", 0) # Invoke the function
+
+
+
+# Hook user32.MessageBoxA
+
+# @ctypes.CFUNCTYPE(
+#     ctypes.c_int, # return
+#     ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong # arguments
+# )
+# def hk_MessageBoxA(hWnd, lpText, lpCaption, uType):
+#   print(lpCaption, lpText)
+#   return user32.MessageBoxA(hWnd, lpText, lpCaption, uType)
+
+# kernel32 = ctypes.CDLL(ctypes.util.find_library("kernel32"))
+
+# PAGE_EXECUTE_READWRITE = 0x40
+# flOldProtect= ctypes.c_long(0)
+# lpflOldProtect = ctypes.byref(flOldProtect)
+# old = ctypes.c_long(1)
+# ret = kernel32.VirtualProtect(ctypes.c_void_p(temp_4), 10, PAGE_EXECUTE_READWRITE, ctypes.byref(old))
+# print(ret, flOldProtect)
+# # libc.memcpy(ioctl_address.contents, ctypes.create_string_buffer(tramp), len(tramp))
+
+@ctypes.CFUNCTYPE(ctypes.c_void_p, ctypes.c_void_p)
+def func(a: ctypes.c_void_p) : a.contents.value = 123
+
+v = ctypes.c_long(1)
+pv = ctypes.pointer(v)
+func(ctypes.byref(v))
+print(pv.contents.value)
