@@ -75,4 +75,4 @@ MessageBoxA_C_Prototype = ctypes.CFUNCTYPE( # <class '_ctypes.PyCFuncPtrType'>
     ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_ulong # arguments
 )
 MessageBoxA = MessageBoxA_C_Prototype(temp_4) # <class 'ctypes.CFUNCTYPE.<locals>.CFunctionType'> # Cast raw-address to Python ctypes 
-MessageBoxA(0, b"text", b"title", 0) # Invoke the function
+# MessageBoxA(0, b"text", b"title", 0) # Invoke the function
