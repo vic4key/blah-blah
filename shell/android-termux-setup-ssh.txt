@@ -1,0 +1,24 @@
+--- On Android
+
+1. Install `termux`
+
+2. $ pkg upgrade
+3. $ pkg install openssh	# Install SSH Server
+4. $ passwd			# Setup password for SSH Server
+5. $ sshd			# Start SSH Server
+
+6. $ whoami 			# To get user name. Eg. u0_a628)
+7. $ ifconfig			# To get find ip address. Eg. 192.168.1.107
+
+
+
+--- On Desktop
+
+1. $ ssh u0_a628@192.168.1.7 -p 8022
+
+
+
+--- Issues
+
+1. Issue `sshd: no hostkeys available -- exiting`
+	Fix: $ ssh-keygen -A
