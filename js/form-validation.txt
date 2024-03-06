@@ -1,0 +1,54 @@
+// Bootstrap Validator
+
+
+
+// CSS
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/css/bootstrapValidator.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"></link>
+
+
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.bv-form .help-block {
+  width: 100%;
+  text-align: right;
+  margin-top: 0.3em;
+  margin-right: 0.3em;
+  color: red;
+}
+
+.form-control-feedback {
+  text-align: right;
+  position: relative;
+  float: right;
+  top: -27px;
+  left: -7px;
+}
+
+
+
+// JS
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+
+$("form").bootstrapValidator(
+{
+    feedbackIcons:
+    {
+        required: "fa fa-asterisk",
+        valid: "fa fa-check",
+        invalid: "fa fa-times",
+        validating: "fa fa-refresh"
+    }
+});
+
+
+
+// Bootstrap 3+
