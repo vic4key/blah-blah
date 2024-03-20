@@ -10,16 +10,6 @@ def decorator_without_params(func): # without params: wrapper(...) only
         return result
     return wrapper
 
-def decorator_with_params(params): # with params: wrapper(...) inside decorator(...)
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            result = func(*args, **kwargs)
-            print("\t", func, args, kwargs, result, params)
-            return result
-        return wrapper
-    return decorator
-
 @decorator_without_params
 def test_decorator_without_params(arg_1, arg_2, arg_3):
     '''
@@ -30,6 +20,16 @@ def test_decorator_without_params(arg_1, arg_2, arg_3):
 
 
 
+def decorator_with_params(params): # with params: wrapper(...) inside decorator(...)
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            print("\t", func, args, kwargs, result, params)
+            return result
+        return wrapper
+    return decorator
+
 @decorator_with_params(params=123)
 def test_decorator_with_params(arg_1, arg_2, arg_3):
     '''
@@ -37,6 +37,8 @@ def test_decorator_with_params(arg_1, arg_2, arg_3):
     '''
     print("test_decorator_with_params", arg_1, arg_2, arg_3)
     return arg_1 + arg_2 + arg_3
+
+
 
 def main():
     print("test_decorator_without_params".center(100, "-"))
@@ -46,8 +48,6 @@ def main():
     print("test_decorator_with_params".center(100, "-"))
     print(help(test_decorator_with_params))
     test_decorator_with_params(1, 2, 3)
-
-
 
 if __name__ == "__main__": main()
 
