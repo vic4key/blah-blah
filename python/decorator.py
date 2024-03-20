@@ -41,11 +41,11 @@ def test_decorator_with_params(arg_1, arg_2, arg_3):
 
 
 def main():
-    print("test_decorator_without_params".center(100, "-"))
+    print(" test_decorator_without_params ".center(100, "-"))
     test_decorator_without_params(1, 2, 3)
     print("--- help ---\n", test_decorator_without_params.__doc__.strip(), "\n--- help ---\n")
 
-    print("test_decorator_with_params".center(100, "-"))
+    print(" test_decorator_with_params ".center(100, "-"))
     test_decorator_with_params(1, 2, 3)
     print("--- help ---\n", test_decorator_with_params.__doc__.strip(), "\n--- help ---\n")
 
