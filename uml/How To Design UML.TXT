@@ -1,0 +1,30 @@
+﻿
+1. Composite (Compose)
+  - Sở hữu và quản lý hoàn toàn object
+	- Chứa object
+  - Cấp phát & hủy object
+	- Tôi hủy thì object bị hủy theo
+	- Nét liền
+	- Mũi tên hướng vào owner
+  - Cần multiple
+
+2. Aggregation (Aggregate)
+  - Chỉ trỏ đến, không sở hữu object, người khác sở hữu quản lý object
+	- Chứa thành viên con trỏ đến object
+	- Tôi hủy thì object vẫn tồn tại
+	- Nét liền
+  - Mũi tên hướng vào owner
+  - Cần multiple
+
+3. Association (Dependency)
+  - Sử dụng đối tượng (như tham số, biến local trong hàm, etc)
+  - Tôi hủy thì object có thể không hủy
+  - Nét đứt
+  - Mũi tên hướng vào ownee
+  - Ko cần multiple
+
+---
+
+Estimate cho design chính là estimate viết SDS
+
+Sequence Diagram trong là những B. Scenario trong SRSd (có thể vẽ thêm cho các step phức tập).
