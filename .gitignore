@@ -43,3 +43,5 @@
 packages/
 
 **/node_modules
+*.rzdb
+*.i64
