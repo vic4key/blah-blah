@@ -1,40 +1,21 @@
-#include <windows.h>
-#include <memory>
-
-void msg_debug_A(const std::string format, ...)
-{
-  va_list args;
-  va_start(args, format);
-
-  int N = _vscprintf(format.c_str(), args) + 1;
-  std::unique_ptr<char[]> p(new char[N]);
-  ZeroMemory(p.get(), N);
-
-  vsnprintf(p.get(), N, format.c_str(), args);
-  OutputDebugStringA(p.get());
-
-  va_end(args);
+#define msg_debug_A(format, ...)\
+{\
+  char s[255] = { 0 };\
+  memset(s, 0, sizeof(s));\
+  sprintf_s(s, (char*)format, __VA_ARGS__);\
+  OutputDebugStringA(s);\
 }
 
-void msg_debug_W(const std::wstring format, ...)
-{
-  va_list args;
-  va_start(args, format);
-
-  int N = _vscwprintf(format.c_str(), args) + 1;
-  std::unique_ptr<wchar_t[]> p(new wchar_t[N]);
-  ZeroMemory(p.get(), N);
-
-  vswprintf(p.get(), N, format.c_str(), args);
-  OutputDebugStringW(p.get());
-
-  va_end(args);
+#define msg_debug_W(format, ...)\
+{\
+  wchar_t s[255] = { 0 };\
+  memset(s, 0, sizeof(s));\
+  swprintf_s(s, (wchar_t*)format, __VA_ARGS__);\
+  OutputDebugStringA(s);\
 }
 
 #ifdef _UNICODE
-#define ts(x) L ## x
 #define msg_debug msg_debug_W
 #else
-#define ts(x) x
 #define msg_debug msg_debug_A
 #endif // _UNICODE
