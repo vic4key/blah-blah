@@ -1,6 +1,6 @@
 #include <chrono>
 
-void timer_callback(const int interval_ms, const std::function<bool()> callback, const int thread_delay_ms = 10)
+void blocking_timer(const int interval_ms, const std::function<bool()> callback, const int thread_delay_ms = 10)
 {
   std::chrono::time_point<std::chrono::system_clock> last_time;
   const std::chrono::milliseconds interval(interval_ms);
