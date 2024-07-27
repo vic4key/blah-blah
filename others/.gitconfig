@@ -1,0 +1,27 @@
+[user]
+	name = Vic P
+	email = vic4key@gmail.com
+[credential]
+	# helper = manager
+	helper = manager-core
+	helper = 
+	helper = C:/Users/Vic/AppData/Local/GitHubDesktop/app-3.3.3/resources/app/git/mingw64/bin/git-credential-manager.exe
+[core]
+	editor = \"E:/Softwares/Binaries/nano/bin/nano.exe\" fileeditor
+	excludesFile = C:\\Users\\Vic\\.gitignore
+	autocrlf = false
+[pull]
+	rebase = false
+[fetch]
+	prune = false
+[rebase]
+	autoStash = false
+[credential "https://gitlab.com"]
+	provider = generic
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[commit]
+	template = C:/Users/Vic/.git-commit-message-template
