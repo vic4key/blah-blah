@@ -1,0 +1,232 @@
+{
+	"always_prompt_for_file_reload": true,
+	"always_show_minimap_viewport": true,
+	"animation_enabled": true,
+	"auto_close_tags": true,
+	"auto_complete": true,
+	"auto_complete_delay": 50,
+	"auto_complete_selector": "source - comment",
+	"auto_complete_size_limit": 4194304,
+	"auto_complete_triggers":
+	[
+		{
+			"characters": ".(){}[],'\"=<>/\\+-|&*%=$#@! ",
+			"selector": "source.python"
+		},
+		{
+			"characters": ":.(){}[],'\"=<>/\\+-|&*%=$#@! ",
+			"selector": "source & - source.python - constant.numeric"
+		},
+		{
+			"characters": " qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP",
+			"selector": "text"
+		}
+	],
+	"auto_complete_with_fields": true,
+	"auto_indent": true,
+	"auto_match_enabled": true,
+	"binary_file_patterns":
+	[
+		"*.jpg",
+		"*.jpeg",
+		"*.png",
+		"*.gif",
+		"*.ttf",
+		"*.tga",
+		"*.dds",
+		"*.ico",
+		"*.eot",
+		"*.pdf",
+		"*.swf",
+		"*.jar",
+		"*.zip"
+	],
+	"bold_folder_labels": true,
+	"caret_style": "smooth",
+	"color_scheme": "Packages/Color Scheme - Default/Monokai.tmTheme",
+	"copy_with_empty_selection": false,
+	"default_encoding": "UTF-8",
+	"default_line_ending": "windows",
+	"draw_indent_guides": true,
+	"draw_minimap_border": false,
+	"draw_white_space": "selection",
+	"enable_hexadecimal_encoding": true,
+	"ensure_newline_at_eof_on_save": false,
+	"fade_fold_buttons": false,
+	"file_exclude_patterns":
+	[
+		"*.7z",
+		"*.a",
+		"*.bak",
+		"*.class",
+		"*.db",
+		"*.dll",
+		"*.dylib",
+		"*.exe",
+		"*.exp",
+		"*.h5",
+		"*.idb",
+		"*.lib",
+		"*.ncb",
+		"*.o",
+		"*.obj",
+		"*.pdb",
+		"*.psd",
+		"*.pyc",
+		"*.pyo",
+		"*.pyd",
+		"*.pyi",
+		"*.rar",
+		"*.sdf",
+		"*.so",
+		"*.sublime-project",
+		"*.sublime-workspace",
+		"*.suo",
+		"*.sys",
+		"*.iobj",
+		"*.ipdb",
+		"*.zip",
+		"*.meta",
+		"*.vcs-cache",
+		".DS_Store"
+	],
+	"folder_exclude_patterns":
+	[
+		".git",
+		".hg",
+		".svn",
+		".vs",
+		".vscode",
+		"/MD",
+		"/MDd",
+		"/MT",
+		"/MTd",
+		"__pycache__",
+		"CVS",
+		"Debug",
+		"Release",
+		"Win32",
+		"x64",
+		"ipch",
+		"lib",
+		"obj"
+	],
+	"font_face": "Courier New",
+	"font_size": 9,
+	"fonts_list":
+	[
+		{
+			"font_face": "Courier New",
+			"font_size": 9
+		},
+		{
+			"font_face": "Courier",
+			"font_size": 10
+		},
+		{
+			"font_face": "Space Mono",
+			"font_size": 11
+		},
+		{
+			"font_face": "Monaco",
+			"font_size": 11
+		},
+		{
+			"font_face": "Cascadia Code",
+			"font_size": 11
+		},
+		{
+			"font_face": "Source Code Pro",
+			"font_size": 11
+		},
+		{
+			"font_face": "Consolas",
+			"font_size": 11
+		},
+		{
+			"font_face": "Ubuntu Mono",
+			"font_size": 12
+		},
+		{
+			"font_face": "Trebuchet MS",
+			"font_size": 12
+		},
+		{
+			"font_face": "High Tower Text",
+			"font_size": 14
+		}
+	],
+	"gnwidgo": true,
+	"gnwidgx": true,
+	"gravity_tab_height_short": true,
+	"gutter": true,
+	"highlight_line": true,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"A File Icon",
+		"BracketHighlighter",
+		"Color Highlighter",
+		"CUDA Snippets",
+		"FileIcons",
+		"fingers-sublime",
+		"Guna",
+		"HexViewer",
+		"JavaScript Completions",
+		"Package Control",
+		"Status Bar JsonPath",
+		"SublimeCodeIntel",
+		"Tabnine",
+		"TypeScript",
+		"Vintage",
+		"zzz Guna Widget zzz"
+	],
+	"indent_guide_options":
+	[
+		"draw_normal",
+		"draw_active"
+	],
+	"index_exclude_patterns":
+	[
+		"*.log"
+	],
+	"index_files": true,
+	"index_workers": 0,
+	"line_numbers": true,
+	"line_padding_bottom": 0,
+	"line_padding_top": 0,
+	"match_brackets": true,
+	"match_brackets_angle": true,
+	"match_brackets_braces": true,
+	"match_brackets_content": true,
+	"match_brackets_square": true,
+	"match_selection": true,
+	"match_tags": true,
+	"remember_full_screen": true,
+	"remember_open_files": true,
+	"rulers":
+	[
+		100
+	],
+	"shift_tab_unindent": true,
+	"show_encoding": true,
+	"show_errors_inline": false,
+	"show_full_path": false,
+	"show_line_endings": true,
+	"show_tab_close_buttons": true,
+	"smart_indent": true,
+	"soda_classic_tabs": true,
+	"soda_folder_icons": true,
+	"tab_completion": false,
+	"tab_size": 2,
+	"telex": true,
+	"theme": "Gravity.sublime-theme",
+	"translate_tabs_to_spaces": false,
+	"tree_animation_enabled": true,
+	"trim_automatic_white_space": false,
+	"trim_trailing_white_space_on_save": false,
+	"update_check": false,
+	"use_tab_stops": true,
+	"word_wrap": false,
+	"wrap_width": 0
+}
