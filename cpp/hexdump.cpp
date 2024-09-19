@@ -2,7 +2,7 @@
 
 #define stringify(s) #s
 #define hexdump_auto_width 16
-#define hexdump(d, n) printf("[%s]\n", stringify(d)); hexdump_impl(d, n, hexdump_auto_width);
+#define hexdump(d, n) printf("[%s @ %p]\n", stringify(d), d); hexdump_impl(d, n, hexdump_auto_width);
 
 void hexdump_impl(void* data, size_t size, uint max_width) // max_width should be 8, 16, 32, or 64
 {
