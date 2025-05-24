@@ -13,7 +13,7 @@ class FileCaching {
      *
      * @param string $category Category prefix for cache files
      * @param int|null $cache_expiry Cache expiration time in seconds (default: null - no expiration)
-     * @param string $cache_dir Directory to store cache files (default: 'cache')
+     * @param string $cache_dir Directory to store cache files (default: 'file_caching')
      */
     public function __construct($category, $cache_expiry = null, $cache_dir = 'file_caching') {
         $this->_directory = __DIR__ . '/' . $cache_dir;
