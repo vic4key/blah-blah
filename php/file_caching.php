@@ -15,7 +15,7 @@ class FileCaching {
      * @param int|null $cache_expiry Cache expiration time in seconds (default: null - no expiration)
      * @param string $cache_dir Directory to store cache files (default: 'cache')
      */
-    public function __construct($category, $cache_expiry = null, $cache_dir = 'cache') {
+    public function __construct($category, $cache_expiry = null, $cache_dir = 'file_caching') {
         $this->_directory = __DIR__ . '/' . $cache_dir;
         $this->_expired = $cache_expiry;
         $this->_category = $category;
