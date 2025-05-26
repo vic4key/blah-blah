@@ -54,7 +54,9 @@ try {
 
     $items = $content['items'] ?? [];
 
-    $cache->store($compute_capability, $items);
+    if (!empty($items)) {
+        $cache->store($compute_capability, $items);
+    }
 
     echo json_encode(['items' => $items]);
 
