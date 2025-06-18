@@ -1,0 +1,117 @@
+--- Notes
+
+HEAD~3 có nghĩa là commit thứ 3 tính từ HEAD xuống (started at 1 = HEAD)
+
+
+
+--- Create patch & apply
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-4 (HEAD -> test, origin/test) 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0 // code cũ
+
+* Trong đó:
+  - commit-0 là code cũ
+  - các commit mới là 1->4
+
+* Bây giờ, muốn tạo patch và merge commit 1-4 sang nhánh khác thì làm như sau:
+  Chú ý khi chọn range commit khi tạo file patch:
+    - Thứ tự commit phải chọn từ dưới lên
+    - Commit đầu  là commit trước khi thay đổi (có nghĩa là lấy commit của code cũ)
+    - Commit cuối là commit đến phần thay đổi muốn lấy
+
+1. Tạo file patch tại nhánh hiện tại
+$ git diff commit-0..commit-4 > 0-4.patch
+
+2. Sang nhánh khác và apply file patch
+$ git clean -df                         // clean sạch sẽ (cẩn thận bước này - sẽ xóa hết các changes hiện tại)
+$ git apply path/to/0-4.patch --stat    // xem thống kê qua các thay đổi
+$ git apply path/to/0-4.patch --check   // test xem có lỗi ko
+$ git apply path/to/0-4.patch           // thực hiện apply các thay đổi
+
+3. Cuối cùng là review changes sau đó `git add *` & commit lên nhánh mới là xong
+
+
+
+--- Delete a specified commit on remote
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-5 (HEAD -> test, origin/test) 5  // đây là commit muốn xóa
+  commit-4 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0
+
+* Bây giờ, muốn xóa commit-5 thì làm như sau:
+
+$ git reset --hard commit-4   // reset về commit ngay trước commit-5 (là commit-4)
+$ git push -f                 // force push
+$ git log --oneline           // check lại log đảm bảo đã xóa commit-5
+  commit-4 (HEAD -> test, origin/test) 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0
+
+
+
+--- Edit a commit message (HEAD)
+
+Chú ý: Commit hash của HEAD sẽ bị thay đổi
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-5 (HEAD -> test, origin/test) oh-no  // đây là commit muốn sửa
+  commit-4 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0
+
+$ git commit --amend
+$ <git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '5', save file>
+$ git push -f
+$ git log --oneline
+  commit-5 (HEAD -> test, origin/test) 5  // check lại log đảm bảo commit message đã được sửa
+  commit-4 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0
+
+
+
+--- Edit a commit message (a specified commit)
+
+Chú ý: Commit hash của các commit từ specified commit đến HEAD sẽ bị thay đổi
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-5 (HEAD -> test, origin/test) oh-no
+  commit-4 4
+  commit-3 oh-no  // đây là commit muốn sửa
+  commit-2 2
+  commit-1 1
+  commit-0 0
+
+$ git rebase -i HEAD~2
+$ <git auto mở file 'git-rebase-todo' trong editor, tìm đúng commit, sửa type 'pick' thành 'reword', save file>
+$ <git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '3', save file>
+$ git push -f
+$ git log --oneline  // check lại log đảm bảo commit message đã được sửa
+  commit-5 (HEAD -> test, origin/test) 5
+  commit-4 4
+  commit-3 3
+  commit-2 2
+  commit-1 1
+  commit-0 0
