@@ -115,3 +115,21 @@ $ git log --oneline  // check lại log đảm bảo commit message đã đượ
   commit-2 2
   commit-1 1
   commit-0 0
+
+
+
+--- Issues
+
+- Issue: You are not currently on a branch.
+
+Mô tả lỗi:
+  ```
+  $ git pull
+  You are not currently on a branch.
+  Please specify which branch you want to merge with.
+  See git-pull(1) for details.
+      git pull <remote> <branch>
+  ```
+
+Solution:
+  Dùng lệnh git checkout lại chính branch đó
