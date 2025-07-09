@@ -104,7 +104,7 @@ $ git log --oneline
   commit-1 1
   commit-0 0
 
-$ git rebase -i HEAD~2
+$ git rebase -i HEAD~3
 $ <git auto mở file 'git-rebase-todo' trong editor, tìm đúng commit, sửa type 'pick' thành 'reword', save file>
 $ <git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '3', save file>
 $ git push -f
