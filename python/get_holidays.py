@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 
 from cachetools import cached, LRUCache
 from cachetools.keys import hashkey
+
 cache = LRUCache(maxsize=128)
 
 def parse_date_flexible(d: str) -> date:
@@ -89,40 +90,44 @@ def is_dayoff(dt: str | date | datetime) -> bool:
     Check if a given date is a day off (holiday or weekend).
 
     Args:
-        dt (str|date|datetime): The date time to check. If the date time is string, the format should be "%Y/%m/%d %H:%M:%S" or "%Y/%m/%d"
+        dt (str|date|datetime): The date time to check. If string, format should be "%Y/%m/%d %H:%M:%S" or "%Y/%m/%d"
 
     Returns:
         bool: True if the date is a holiday or weekend, False otherwise
     """
-    if type(dt) is str:
+    # Convert string to datetime if needed
+    if isinstance(dt, str):
         try:
-            if len(dt) > 10 and ':' in dt: temp = datetime.strptime(dt, "%Y/%m/%d %H:%M:%S")
-            else: temp = datetime.strptime(dt, "%Y/%m/%d")
-            dt = temp
+            if len(dt) > 10 and ':' in dt:
+                dt = datetime.strptime(dt, "%Y/%m/%d %H:%M:%S")
+            else:
+                dt = datetime.strptime(dt, "%Y/%m/%d")
         except Exception as e:
-            raise Exception(f"Error: Invalid date time format ({str(e)}).")
+            raise ValueError(f"Invalid date format. Expected '%Y/%m/%d %H:%M:%S' or '%Y/%m/%d', got: {dt}")
 
-    holidays = get_holidays(year=dt.year, include_weekends=True, exclude_pastdays=False) or []
+    # Get holidays for the year including weekends
+    holidays = get_holidays(year=dt.year, include_weekends=True, exclude_pastdays=False)
 
-    holiday_date_strings = list({item['date'] for item in holidays})
-    holiday_date_strings.sort()
+    # Convert to set of date objects for faster lookup
+    holiday_dates = {parse_date_flexible(item['date']) for item in holidays}
 
-    holiday_dates = [parse_date_flexible(item) for item in holiday_date_strings]
+    # Get date part only
+    check_date = dt.date() if isinstance(dt, datetime) else dt
 
-    day = dt if type(dt) is date else dt.date()
-
-    return day in holiday_dates
-
+    return check_date in holiday_dates
 
 
-print("\n=== Test hàm check_dayoff ===")
+
+print("\n=== Test hàm is_dayoff ===")
 test_dates = [
-    "2025/07/07 12:00:00",  # Ngày thường (T72)
+    "2025/07/07 12:00:00",  # Ngày thường (T2)
     "2025/01/01 09:00:00",  # Tết Dương lịch
     "2025/01/01",           # Tết Dương lịch (không có giờ)
-    "2025/07/11 16:55:00",  # Ngày thường (T7)
+    "2025/07/11 16:55:00",  # Ngày thường (T6)
     "2025/07/13",           # Chủ nhật
     "2025/04/30 14:30:00",  # Ngày Giải phóng miền Nam
+    date(2025, 7, 12),      # Saturday (date object)
+    datetime(2025, 5, 1, 10, 30, 0),  # Labor Day (datetime object)
 ]
 
 for test_date in test_dates:
