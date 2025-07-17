@@ -84,16 +84,24 @@ def get_holidays(year: int, months: int = None, include_weekends: bool = False, 
 
     return holidays
 
-def is_dayoff_impl(dt: date | datetime) -> bool:
+def is_dayoff(dt: str | date | datetime) -> bool:
     """
     Check if a given date is a day off (holiday or weekend).
 
     Args:
-        current_date (date|datetime): Date Time to check
+        dt (str|date|datetime): The date time to check. If the date time is string, the format should be "%Y/%m/%d %H:%M:%S" or "%Y/%m/%d"
 
     Returns:
         bool: True if the date is a holiday or weekend, False otherwise
     """
+    if type(dt) is str:
+        try:
+            if len(dt) > 10 and ':' in dt: temp = datetime.strptime(dt, "%Y/%m/%d %H:%M:%S")
+            else: temp = datetime.strptime(dt, "%Y/%m/%d")
+            dt = temp
+        except Exception as e:
+            raise Exception(f"Error: Invalid date time format ({str(e)}).")
+
     holidays = get_holidays(year=dt.year, include_weekends=True, exclude_pastdays=False) or []
 
     holiday_date_strings = list({item['date'] for item in holidays})
@@ -105,27 +113,7 @@ def is_dayoff_impl(dt: date | datetime) -> bool:
 
     return day in holiday_dates
 
-def is_dayoff(dt_string: str) -> bool:
-    """
-    Check if a given date string is a day off (holiday or weekend).
 
-    Args:
-        dt_string (str): The date time string in format "%Y/%m/%d %H:%M:%S" or "%Y/%m/%d"
-
-    Returns:
-        bool: True if the date is a day off, False otherwise
-    """
-    try:
-        if len(dt_string) > 10 and ':' in dt_string:
-            dt = datetime.strptime(dt_string, "%Y/%m/%d %H:%M:%S")
-        else:
-            dt = datetime.strptime(dt_string, "%Y/%m/%d")
-        return is_dayoff_impl(dt)
-    except ValueError as e:
-        print(f"Error: Invalid date format. Expected '%Y/%m/%d %H:%M:%S' or '%Y/%m/%d'")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-    return False
 
 print("\n=== Test hàm check_dayoff ===")
 test_dates = [
