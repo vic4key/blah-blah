@@ -1,5 +1,9 @@
 from calendar import monthrange
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+
+from cachetools import cached, LRUCache
+from cachetools.keys import hashkey
+cache = LRUCache(maxsize=128)
 
 def parse_date_flexible(d: str) -> date:
     try:
@@ -10,6 +14,7 @@ def parse_date_flexible(d: str) -> date:
         return date(y, m, day)
     except Exception: return None
 
+@cached(cache=cache, key=lambda *args, **kwargs: hashkey(*args, **kwargs))
 def get_holidays(year: int, months: int = None, include_weekends: bool = False, exclude_pastdays: bool = False) -> list:
     """
     Get a list of popular public holidays in Vietnam for a given year.
@@ -78,8 +83,6 @@ def get_holidays(year: int, months: int = None, include_weekends: bool = False, 
         holidays = [item for item in holidays if day <= parse_date_flexible(item['date']) <= end_date]
 
     return holidays
-
-from datetime import datetime
 
 def is_dayoff_impl(dt: date | datetime) -> bool:
     """
