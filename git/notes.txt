@@ -118,6 +118,13 @@ $ git log --oneline  // check lại log đảm bảo commit message đã đượ
 
 
 
+--- Lỡ push commit (local changes) nhưng chưa pull code latest trước khi push
+
+$ git pull --rebase
+$ git push -f
+
+
+
 --- Pull Request Options
 
 *Squash and merge:
