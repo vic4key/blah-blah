@@ -1,0 +1,5 @@
+$ pyinstaller --onefile --noconsole --icon vic.ico --name app.exe app.py
+
+$ pipreqs --ignore Lib,Scripts --encoding=utf8 --force --no-pin .
+
+$ pipreqs --ignore Lib,Scripts --encoding=utf8 --force --mode=no-pin .

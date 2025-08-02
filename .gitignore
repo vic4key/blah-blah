@@ -41,6 +41,7 @@
 /Win32
 /x64
 packages/
+python/build
 
 **/node_modules
 *.rzdb
