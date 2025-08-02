@@ -1,3 +1,6 @@
+#include <cstdint>
+#include <algorithm> // C++20
+
 bool rgba_to_yuv(
     const uint8_t* data, const size_t size, const uint32_t width, const uint32_t height,
     uint8_t* yuv_data, size_t* yuv_size)
