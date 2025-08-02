@@ -1,0 +1,26 @@
+Chủ đề một kỹ sư của Tiktok chia sẻ khá thú vị team sẽ note một số ý chính cho mọi người:
+ 
+Bạn rút ra bài học lớn nhất nào từ việc làm việc cùng các kỹ sư tài năng tại TikTok?
+Các kỹ sư tài năng rất hiếm và thường bị trả lương thấp hơn so với giá trị thực sự của họ.
+ 
+Làm thế nào các bạn đã mở rộng quy mô để đạt hơn 1 tỷ người dùng hoạt động?
+Thiết kế hệ thống chuyên sâu: hệ thống phân tán toàn cầu, bộ nhớ đệm, microservices, sharding, cân bằng tải, và nhiều yếu tố khác.
+ 
+Những ngôn ngữ lập trình nào được sử dụng cho backend của TikTok? 
+Go, Python, C++, Java. Chắc chắn không phải Assembly.
+ 
+Một số sách và tài liệu học tập tốt để hiểu cách thuật toán hoạt động là gì?
+https://github.com/bytedance/monolith
+Thuật toán của TikTok có dựa trên bài báo Monolith không? Có, đây là bài báo: https://arxiv.org/pdf/2209.07663
+ 
+Bạn có thể giải thích cách thuật toán của TikTok khác với Meta/Twitter/Google không?
+Thuật toán của TikTok tập trung vào khám phá nội dung trước tiên, ưu tiên các nội dung có tính tương tác cao, tạo cơ hội cho các nhà sáng tạo nhỏ, khác với các đối thủ cạnh tranh.
+ 
+Bạn sẽ mô tả văn hóa làm việc của TikTok như thế nào so với các công ty công nghệ lớn khác?
+Một công ty Trung Quốc bắt chước các công ty công nghệ lớn của Mỹ, có đồ ăn miễn phí tại văn phòng nhưng làm việc ngày đêm.
+ 
+Bạn có nghĩ tiêu chuẩn tuyển dụng hiện nay đã thấp hơn không?
+Tôi đã phỏng vấn, trả lời đúng nhưng vẫn không được gọi đến phỏng vấn trực tiếp. Tiêu chuẩn tuyển dụng là leetcode.
+ 
+Java có được sử dụng cho TikTok không?
+Go được sử dụng cho microservices, Python cho machine learning, và C++ để tối ưu hiệu suất.
