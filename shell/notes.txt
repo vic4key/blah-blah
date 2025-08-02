@@ -33,3 +33,19 @@ export HISTCONTROL=ignoredups
 # find symbol in shared library
 readelf -sW /usr/lib/x86_64-linux-gnu/libpipewire-0.3.so | grep -iE pw_stream_dequeue_buffer
 objdump -T --demangle /usr/lib/x86_64-linux-gnu/libpipewire-0.3.so | grep -iE pw_stream_dequeue_buffer
+
+
+
+# recursive, ignore case, line-number, specified file ext
+grep -rina "cip" --include=*.{h,c,cpp}
+
+# recursive, ignore case, line-number
+grep -rin "weston_seat_init" /usr/include/
+
+# recursive, ignore case, line-number, text file, extended-regex
+grep -rinaE "wl_display_" .
+
+
+# create a symbolic link
+ln -s <path/to/source/file> <path/to/symbolic/file>
+

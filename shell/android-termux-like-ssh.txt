@@ -1,0 +1,30 @@
+plug usb port
+
+in phone, open termux and run: sshd
+
+--- ADB
+$ adb forward tcp:8080 tcp:8080
+$ adb forward tcp:8022 tcp:8022
+$ adb forward tcp:22 tcp:8022
+$ ssh u0_a638@127.0.0.1 -p 8022 (password: <simple>)
+
+--- VSCode
+$ code-server --auth none --disable-telemetry
+$ code-server --bind-addr 0.0.0.0:8080 --disable-telemetry
+$ NODE_OPTIONS="--require ./android-as-linux.js" code-server --auth none --disable-telemetry
+ 
+--- Optional
+$ code-server --bind-addr 0.0.0.0:8080 --cert --disable-telemetry
+
+$ cat ~/.config/code-server/config.yaml
+Password: <simple>
+
+
+--- Others
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/sdcard/Download/files
+$ export PYTHONPATH=$PYTHONPATH:/data/data/com.termux/files/home/py-hooking:/data/data/com.termux/files/home/tinygrad
+
+
+--- Links
+https://coder.com/docs/code-server/termux#installation
+https://gist.github.com/ppoffice/b9e88c9fd1daf882bc0e7f31221dda01
