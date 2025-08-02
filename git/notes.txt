@@ -53,7 +53,10 @@ $ git log --oneline
 * Bây giờ, muốn xóa commit-5 thì làm như sau:
 
 $ git reset --hard commit-4   // reset về commit ngay trước commit-5 (là commit-4)
+<xem lại log, đảm bảo đúng expect>
+
 $ git push -f                 // force push
+
 $ git log --oneline           // check lại log đảm bảo đã xóa commit-5
   commit-4 (HEAD -> test, origin/test) 4
   commit-3 3
@@ -78,8 +81,11 @@ $ git log --oneline
   commit-0 0
 
 $ git commit --amend
-$ <git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '5', save file>
+<git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '5', save file>
+<xem lại log, đảm bảo đúng expect>
+
 $ git push -f
+
 $ git log --oneline
   commit-5 (HEAD -> test, origin/test) 5  // check lại log đảm bảo commit message đã được sửa
   commit-4 4
@@ -105,9 +111,12 @@ $ git log --oneline
   commit-0 0
 
 $ git rebase -i HEAD~3
-$ <git auto mở file 'git-rebase-todo' trong editor, tìm đúng commit, sửa type 'pick' thành 'reword', save file>
-$ <git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '3', save file>
+<git auto mở file 'git-rebase-todo' trong editor, tìm đúng commit, sửa type 'pick' thành 'reword', save file>
+<git auto mở file 'COMMIT_EDITMSG' trong editor, tìm đúng commit, sửa message 'oh-no' thành '3', save file>
+<xem lại log, đảm bảo đúng expect>
+
 $ git push -f
+
 $ git log --oneline  // check lại log đảm bảo commit message đã được sửa
   commit-5 (HEAD -> test, origin/test) 5
   commit-4 4
@@ -118,10 +127,54 @@ $ git log --oneline  // check lại log đảm bảo commit message đã đượ
 
 
 
---- Lỡ push commit (local changes) nhưng chưa pull code latest trước khi push
+--- Lỡ push commit (case: chưa push lên remote) nhưng chưa pull code latest trước khi push, và bị tạo thêm 1 commit merged
 
 $ git pull --rebase
+
+<xem lại log, đảm bảo đúng expect>
+
 $ git push -f
+
+
+
+--- Lỡ push commit (case: đã push lên remote) nhưng chưa pull code latest trước khi push, và bị tạo thêm 1 commit merged
+
+* Hiện tại log như thế này
+
+$ git log --oneline -n 5
+commit-4 (HEAD -> test_squash-and-merge-5) Merge branch ...
+commit-3 Update okok.txt
+commit-2 (origin/test_squash-and-merge-5) Merge branch ...
+commit-1 ohno // muốn merge các commit từ HEAD xuống commit này
+commit-0 test
+
+* Bây giờ, muốn xóa gộp 4 commit (commit-4, commit-3, commit-2, commit-1) thành 1 commit thì làm như sau:
+
+$ git rebase -i commit-0 // commit origin
+<git auto mở trình soạn thảo với danh sách các commit từ commit-1 trở lên:
+```
+pick commit-1 ohno
+pick commit-2 (origin/test_squash-and-merge-5) Merge branch ...
+pick commit-3 Update okok.txt
+pick commit-4 (HEAD -> test_squash-and-merge-5) Merge branch ...
+```
+<sửa thành>
+```
+pick commit-1 ohno (merged)
+squash commit-2 (origin/test_squash-and-merge-5) Merge branch ...
+squash commit-3 Update okok.txt
+squash commit-4 (HEAD -> test_squash-and-merge-5) Merge branch ...
+```
+<sau đó lưu lại>
+<git auto mở trình soạn thảo để sửa log, xóa các commit message và chỉ giữ lại 1 commit message>
+<sau đó lưu lại>
+<xem lại log, đảm bảo đúng expect>
+
+$ git push -f
+
+$ git log --oneline -n 5
+9e44cfe (HEAD -> test_squash-and-merge-5, origin/test_squash-and-merge-5) ohno (merged)
+commit-0 test
 
 
 
