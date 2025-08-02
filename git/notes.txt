@@ -4,6 +4,12 @@ HEAD~3 có nghĩa là commit thứ 3 tính từ HEAD xuống (started at 1 = HEA
 
 
 
+--- Clean-up
+$ git clean -df // force removal of untracked files & directories
+$ git clean -dfx // force removal of untracked files & directories & ignored files
+
+
+
 --- Create patch & apply
 
 * Hiện tại log như thế này
@@ -213,3 +219,10 @@ Mô tả lỗi:
 
 Solution:
   Dùng lệnh git checkout lại chính branch đó
+
+
+
+--- Links
+https://initialcommit.com/blog/git-reflog
+https://viblo.asia/p/git-va-nhung-thuat-ngu-co-ban-L4x5xRABZBM
+https://viblo.asia/p/git-reflog-phao-cuu-sinh-cho-nhung-loi-lam-hay-gap-tren-git-x7Z4Dja2LnX
