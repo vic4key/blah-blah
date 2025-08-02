@@ -118,6 +118,26 @@ $ git log --oneline  // check lại log đảm bảo commit message đã đượ
 
 
 
+--- Pull Request Options
+
+*Squash and merge:
+- Merge 10 commit thành 1 commit duy nhất (code final => code logic không bị thay đổi).
+- Chỉ tạo ra 1 commit vào base branch (A-B-C + C-D-E => A-B-C-DE').
+- Mất lịch sử chi tiết (mất 10 commit message).
+
+Git lấy tất cả các thay đổi (diffs) từ toàn bộ 10 commit trong branch của bạn và gộp chúng thành một commit duy nhất.
+Thứ tự các commit không được giữ lại theo cách từng bước, mà chỉ nội dung code thay đổi cuối cùng được tổng hợp.
+
+*Rebase and merge:
+- Patch lần lượt 10 commit vào base branch (A-B-C + C-D-E => A-B-C-D'-E').
+- Tạo ra đủ 10 commit giống bên branch được merge (giữ nguyên 10 commit message & không tạo ra commit hợp nhất).
+- Tạo lịch sử tuyến tính.
+
+Git sẽ lấy từng commit từ branch của bạn (ví dụ: 10 commit) và patch chúng lần lượt lên trên lịch sử của base branch.
+Quá trình này giống như "đặt lại" (rebase/patch) các commit của bạn lên đầu base branch, giữ nguyên nội dung thay đổi của từng commit.
+
+
+
 --- Issues
 
 - Issue: You are not currently on a branch.
