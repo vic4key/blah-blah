@@ -184,6 +184,23 @@ commit-0 test
 
 
 
+--- Xem & Tạo file path thay đổi chỉ giữa 2 commits (ko bao gồm các commit trung gian)
+
+$ git diff <commit1> <commit2> # all files
+$ git diff <commit1> <commit2> -- <file_path> # one file
+$ git diff <commit1> <commit2> -- <file_1 file_2> # multiple files
+
+$ git diff 19016ec 6ffc717 -- main.py > main.py.patch # lưu ra file patch
+
+
+
+--- Tạo file path thay đổi trong một khoảng 2 commits (bao gồm các commit trung gian, auto tạo mỗi file tương ứng với một commit)
+
+$ git format-patch 19016ec..6ffc717
+$ git format-patch 19016ec..6ffc717 -- main.py # một file cụ thể
+
+
+
 --- Pull Request Options
 
 *Squash and merge:
