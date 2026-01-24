@@ -133,6 +133,38 @@ $ git log --oneline  // check lại log đảm bảo commit message đã đượ
 
 
 
+--- Undo the HEAD commit back to stagged area
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-1 (HEAD -> test, origin/test) 2  // đây là commit muốn sửa
+  commit-0 0
+
+$ git reset --soft commit-0
+
+
+
+--- Merge các commits into one
+
+Chú ý: Commit hash của HEAD sẽ bị thay đổi
+
+* Hiện tại log như thế này
+
+$ git log --oneline
+  commit-1 (HEAD -> test, origin/test) 1  // đây là commit muốn merge
+  commit-0 0
+
+$ git reset --soft commit-0
+$ git commit --amend -m "Initial"
+
+* Sau khi sửa log như thế này (merge changes của các commit into one)
+
+$ git log --oneline
+  commit-0 (HEAD -> test, origin/test) 0
+
+
+
 --- Lỡ push commit (case: chưa push lên remote) nhưng chưa pull code latest trước khi push, và bị tạo thêm 1 commit merged
 
 $ git pull --rebase
