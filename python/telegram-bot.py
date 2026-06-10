@@ -5,6 +5,7 @@
 # notes:
 # dump json object by forward a chat message to `@JsonDumpBot`
 # the channel id is '-100{<id>-from-url}' # `https://web.telegram.org/k/<id>` (eg. https://web.telegram.org/k/-1642803959)
+# go to channel's settings and add bot as a subscriber/administrator
 # https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35
 
 ''' to create a telegram bot and get its token
@@ -27,7 +28,6 @@ dotenv.load_dotenv()
 
 bot_name = "@da_Poet_BOT"
 bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
-print(bot_token)
 
 # send message via requests
 
@@ -44,16 +44,22 @@ def send_message_to_telegram(message, chat_id, access_token=bot_token):
         print(response.status_code, "\n", response.text, "\n")
     except Exception as e: print(e)
 
-user_id = "1809685164" # the user id that bot is chatting with (eg. 'vic4key')
-send_message_to_telegram("<b>halo</b> <i>halo</i> <u>halo</u>", chat_id=user_id)
-
-channel_id = "-1001642803959" # the channel id that bot is chatting with (eg. 'TEST CHANNEL')
-send_message_to_telegram("<b>halo</b> <i>halo</i> <u>halo</u>", chat_id=channel_id)
-
 # send message via python-telegram-bot
 # 
-# pip install python-telegram-bot
-# 
-# from telegram import Bot
-# bot = Bot(bot_token)
-# bot.send_message(chat_id, "halo")
+# pip install requests python-telegram-bot
+
+async def main():
+    from telegram import Bot
+    bot = Bot(bot_token)
+    await bot.send_message(chat_id="-1001642803959", text="hello world")
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
+
+    # user_id = "1809685164" # the user id that bot is chatting with (eg. 'da Poet's BOT')
+    # send_message_to_telegram("<b>halo</b> <i>halo</i> <u>halo</u>", chat_id=user_id)
+
+    # channel_id = "-1001642803959" # the channel id that bot is chatting with (eg. 'TEST CHANNEL')
+    # channel_id = "-1003718449530" # the channel id that bot is chatting with (eg. 'HayVL AI' <hayvl_app>)
+    # send_message_to_telegram("<b>halo</b> <i>halo</i> <u>halo</u>", chat_id=channel_id)
