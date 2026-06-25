@@ -3,9 +3,9 @@
 # https://help.nethunt.com/en/articles/6253243-how-to-make-an-api-call-to-the-telegram-channel
 
 # notes:
-# dump json object by forward a chat message to `@JsonDumpBot`
-# the channel id is '-100{<id>-from-url}' # `https://web.telegram.org/k/<id>` (eg. https://web.telegram.org/k/-1642803959)
-# go to channel's settings and add bot as a subscriber/administrator
+# create a new channel, then go to channel's settings and add your bot as a subscriber/administrator
+# send a temp message to the channel that has been created and then forward the temp message to `@JsonDumpBot`
+# the channel id is '-100...' # `https://web.telegram.org/k/<id>` (eg. https://web.telegram.org/k/-1642803959)
 # https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35
 
 ''' to create a telegram bot and get its token
