@@ -49,3 +49,8 @@ grep -rinaE "wl_display_" .
 # create a symbolic link
 ln -s <path/to/source/file> <path/to/symbolic/file>
 
+
+# disable the floating screen rotation icon that shown as the suggestion in the corner of your samsung phone when you tilt it
+
+adb shell settings put secure show_rotation_suggestions 0
+
