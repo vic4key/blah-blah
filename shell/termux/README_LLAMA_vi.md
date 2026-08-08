@@ -99,6 +99,7 @@ Tải bản nén 4-bit (`Q4_K_M`) tối ưu cho di động
 Nhờ cấu hình PATH ở trên, giờ đây bạn có thể đứng ở bất kỳ thư mục nào và gọi lệnh trực tiếp:
 ```bash
 llama-server --port 1234 -ngl 99 -t 4 -m /sdcard/Download/Qwen3-4B-Q4_K_M.gguf
+llama-server --port 1234 -ngl 99 -t 4 -c 4096 --parallel 1 -fa on --cache-type-k q8_0 --cache-type-v q8_0 -b 512 -ub 512 -m /sdcard/Download/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf
 ```
 **Giải thích các cờ quan trọng:**
 * `--port 1234`: Chạy cổng Web UI/API tại port 1234.

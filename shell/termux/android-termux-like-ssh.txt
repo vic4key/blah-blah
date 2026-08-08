@@ -5,6 +5,13 @@ in phone, open termux and run: sshd
 --- ADB
 
 // connect adb via wifi debugging
+go to `Settings` in phone and find `Wireless debugging`, turn on it
+press `Pair device with pairing code`, a dialog will be shown, you can use these infor for pairing device
+    - the ip address & port (eg. 192.168.1.7:1234)
+    - Wi-Fi pairing code 6-digit (eg. 123456)
+in the PC's Terminal:
+$ adb pair 192.168.1.7:1234 (will ask the pairing code, enter: 123456)
+$ adb connect 192.168.1.7:5678 (notice, this is another port)
 
 // forward ports to use them like local ports on PC
 $ adb forward tcp:1234 tcp:1234

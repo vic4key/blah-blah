@@ -99,6 +99,7 @@ Fetch a 4-bit quantized layout (`Q4_K_M`) engineered to run smoothly inside smar
 Thanks to the environment variables configured earlier, you can now trigger the execution engine instantly from any active working directory path:
 ```bash
 llama-server --port 1234 -ngl 99 -t 4 -m /sdcard/Download/Qwen3-4B-Q4_K_M.gguf
+llama-server --port 1234 -ngl 99 -t 4 -c 4096 --parallel 1 -fa on --cache-type-k q8_0 --cache-type-v q8_0 -b 512 -ub 512 -m /sdcard/Download/Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf
 ```
 **Core Parameter Explanations:**
 * `--port 1234`: Hosts your local Web Interface and OpenAI-compatible API endpoint on port 1234.
