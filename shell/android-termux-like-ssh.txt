@@ -3,10 +3,34 @@ plug usb port
 in phone, open termux and run: sshd
 
 --- ADB
+
+// connect adb via wifi debugging
+
+// forward ports to use them like local ports on PC
+$ adb forward tcp:1234 tcp:1234
 $ adb forward tcp:8080 tcp:8080
 $ adb forward tcp:8022 tcp:8022
-$ adb forward tcp:22 tcp:8022
 $ ssh u0_a638@127.0.0.1 -p 8022 (password: <simple>)
+
+If you got the below error (due to you changed to another phone):
+```
+C:\Users\Vic>ssh m3q@127.0.0.1 -p 8022
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+SHA256:...
+Please contact your system administrator.
+Add correct host key in C:\\Users\\Vic/.ssh/known_hosts to get rid of this message.
+Offending ED25519 key in C:\\Users\\Vic/.ssh/known_hosts:12
+Host key for [127.0.0.1]:8022 has changed and you have requested strict checking.
+Host key verification failed.
+```
+Let run the command: `powershell -Command "(Get-Content C:\Users\Vic\.ssh\known_hosts) | Where-Object { $_ -notmatch '8022' } | S
+et-Content C:\Users\Vic\.ssh\known_hosts"` to fix it.
 
 --- VSCode
 $ code-server --auth none --disable-telemetry
