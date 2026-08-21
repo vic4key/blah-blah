@@ -276,6 +276,7 @@ $ git log HEAD..repo_1/master --oneline
 
 # Eg. Lỡ push commit local lên remote, để revert làm như sau
 $ git push origin <commit_hash>:<remote_branch_name> --force-with-lease
+$ git push origin HEAD~2:feature/monitor-model-error --force-with-lease (cho nhiều commit)
 
 $ git log --oneline -3
 b052add (HEAD -> feature/test, origin/feature/test) temp
