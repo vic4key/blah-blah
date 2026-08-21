@@ -233,6 +233,64 @@ $ git format-patch 19016ec..6ffc717 -- main.py # một file cụ thể
 
 
 
+--- Cách cherry pick từ repo_1 vào repo_2
+ 
+# đảm bảo trên PC đã có cả 2 repo_1 & repo_2
+# cd vào repo_2
+$ cd ~/workspace/repo_2
+
+# thử show 1 commit => báo lỗi ko tìm thấy
+$ git show a87f71c --stat
+
+# add tạm repo_1 vào repo_2, để copy các objects/commits từ repo_1 vào repo_2
+$ git remote add repo_1 ~/workspace/repo_1
+$ git fetch repo_1/master
+ 
+# thử show 1 commit => hiển thị được commit
+$ git log repo_1/master --oneline -15
+$ git show a87f71c --stat
+ 
+# thử cherry pick 1 commit
+$ git cherry-pick a87f71c
+$ git status
+ 
+# trước khi push, kiểm tra lại up-stream hiện tại cho chắc chắn là repo_2
+$ git branch -vv
+$ git remote -v
+ 
+- xóa link repo_2 khỏi repo_1 (optional) 
+$ git remote -v
+$ git remote remove repo_1 / or / git remote rm repo_1
+$ git remote -v
+ 
+- update thêm các commit mới từ repo_1 sang repo_2 (optional) 
+$ git fetch repo_1/master
+$ git log repo_1/master --oneline
+ 
+# chỉ xem commit chưa có trong repo_2
+$ git log HEAD..repo_1/master --oneline
+
+
+
+--- Ép branch remote quay về một commit cụ thể ở local, nôm na giống như move back commit từ remote về local
+
+# Eg. Lỡ push commit local lên remote, để revert làm như sau
+$ git push origin <commit_hash>:<remote_branch_name> --force-with-lease
+
+$ git log --oneline -3
+b052add (HEAD -> feature/test, origin/feature/test) temp
+75c2353 (origin/develop, develop) Initial
+9c2774d Initial
+
+$ git push origin 75c2353:feature/test --force-with-lease
+
+$ git log --oneline -3
+b052add (HEAD -> feature/test) temp
+75c2353 (origin/feature/test, origin/develop, develop) Initial
+9c2774d Initial
+
+
+
 --- Pull Request Options
 
 *Squash and merge:
