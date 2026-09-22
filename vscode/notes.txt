@@ -1,0 +1,52 @@
+--- AE nào muốn sử dụng both AI Copilot + F12 references trong VS Code (latest + open folder WSL via UNC) thì làm như trên nhé
+
+VS Settings (ở cả 3 tab cho chắc):
+caseSensitiveFileSupport => enabled
+limitSymbolsToIncludedHeaders => false
+intelliSenseEngine => Tag Parser
+ 
+.vscode\settings.json
+```
+{
+ "C_Cpp.caseSensitiveFileSupport": "enabled",
+    "C_Cpp.intelliSense**gine": "Tag Parser",
+    "C_Cpp.l**gingLevel": "Debug",
+    "C_Cpp.d**ault.browse.limitSymbolsToInclude**eaders": false,
+    "C_Cpp.files.exclude": {
+        "**/build/**": true,
+        "**/images/**": true,
+        "**/tests/**": true
+    },
+    "search.exclude": {
+        "**/build/**": true,
+        "**/images/**": true,
+        "**/tests/**": true
+    }
+}
+```
+
+.vscode\c_cpp_properties.json
+```
+{
+    "configurations": [
+        {
+            "name": "project_name",
+            "compilerPath": "",
+            "includePath": [
+                "${workspaceFolder}/path/to/directory/**"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/path/to/directory"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            }
+        }
+    ],
+    "version": 4
+}
+```
+
+Sau đó chạy 2 lệnh này rồi chờ nó parsing completed (khoảng 5') là xong
+Ctrl Shift P: C/C++: Reset IntelliSense Database
+Ctrl Shift P: Developer: Reload Window
