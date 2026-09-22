@@ -289,6 +289,100 @@ $ git log --oneline -3
 b052add (HEAD -> feature/test) temp
 75c2353 (origin/feature/test, origin/develop, develop) Initial
 9c2774d Initial
+ 
+
+
+--- Sửa lại commit lửng lơ ở giữa bằng cách rebase (Gerrit)
+
+# Update the behind commit by rebase
+# Note:
+#   - git will auto replay the new changes to commit C2, C3
+#   - the hash of commits will be changed
+ 
+# example git log like this
+C3 (HEAD)
+C2
+C1 <=
+ 
+# Step 1. Move to C1 state
+$ git rebase -i C1
+ 
+# Step 2. change C1 from `pick` to `edit` and save
+edit C1
+pick C2
+pick C3
+ 
+$ git log --oneline -3
+ 
+# Step 3. Make changes here...
+ 
+# Step 4. Add changes to commit C1
+$ git add .
+$ git commit --amend --no-edit
+ 
+# Step 5. Continue rebase to complete (git will auto replay the new changes to commit C2, C3)
+$ git rebase --continue
+ 
+# Step 6. Re-push to remote
+$ git push origin HEAD:refs/for/master
+
+
+
+--- Sửa lại author các của các commit đã commit
+
+# Re-update commit's author (bases on `Update the behind commit by rebase`, at Step 4 `Add changes`)
+ 
+# Configure author
+git config user.name "GaPVR"
+git config user.email "gapvr@fpt.com"
+ 
+# Review after configured
+git config user.name
+git config user.email
+ 
+# Show author before updating
+git show --no-patch --format=fuller HEAD
+ 
+# Updating commit's author
+git commit --amend --reset-author --no-edit
+ 
+# Show author after updating
+git show --no-patch --format=fuller HEAD
+ 
+# Continue rebase to complete
+git rebase --continue
+
+
+
+--- Cất tạm code changes đi, quay về lại state chưa có code changes, mà không làm mất code changes đang làm dở
+
+# cất các thay đổi hiện tại
+$ git stash -u
+
+# code state lúc này tự động về lúc chưa có code changes ...
+
+# khôi phục lại code sau khi xong việc
+$ git stash pop
+
+
+
+--- Xóa sạch toàn bộ code changes
+
+# clear all changes and reset hard to last commit on remote
+$ git fetch origin git reset --hard origin/master
+$ git clean -fd or git clean -fdx (optional) 
+ 
+# clear all changes and reset hard to last commit on local (included local commit)
+$ git reset --hard HEAD
+
+# clear all changes and reset hard to last commit on remote branch
+$ git reset --hard origin/master
+
+
+
+--- Phục hồi reset hard đến bất kỳ thời điểm commit nào đã từng làm việc
+$ git reflog
+$ git reset --hard <commit>
 
 
 
