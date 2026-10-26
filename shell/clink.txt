@@ -1,0 +1,8 @@
+Clink
+
+--- Ưu tiên suggest file/folder trong current directory trước, sau đó mới đến %PATH%
+# https://chrisant996.github.io/clink/clink.html#executable-completion
+
+$ clink set exec.enable false
+
+---
