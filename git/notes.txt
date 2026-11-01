@@ -354,7 +354,7 @@ git rebase --continue
 
 
 
---- Cất tạm code changes đi, quay về lại state chưa có code changes, mà không làm mất code changes đang làm dở
+--- Git Stash Usage (cất tạm code changes đi, quay về lại state chưa có code changes, mà không làm mất code changes đang làm dở - git version mới)
 
 # cất các thay đổi hiện tại
 $ git stash -u
@@ -363,6 +363,34 @@ $ git stash -u
 
 # khôi phục lại code sau khi xong việc
 $ git stash pop
+
+
+
+--- Git Stash Usage (cất tạm code changes đi, quay về lại state chưa có code changes, mà không làm mất code changes đang làm dở - git version cũ)
+
+git stash list
+git stash save -u "this is a message"
+git stash list
+
+# code state lúc này tự động về lúc chưa có code changes ...
+
+git stash list
+git stash apply --index stash@{0}
+git stash list
+
+
+
+--- Git Stash Usage (keep state of Staged & Unstaged Changes)
+
+git stash list
+git stash save -u "this is a message"
+git stash list
+
+# code state lúc này tự động về lúc chưa có code changes ...
+
+git stash list
+git stash pop --index
+git stash list
 
 
 
