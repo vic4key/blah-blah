@@ -1,0 +1,22 @@
+NODEJS
+
+--- Node Version Manager
+
+$ winget install CoreyButler.NVMforWindows
+
+$ nvm list
+24.5.0
+20.5.0
+18.20.8
+16.13.1
+
+$ nvm use 20.5.0
+
+$ node -v
+v20.5.0
+
+$ npm install
+
+...
+
+---
