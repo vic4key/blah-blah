@@ -1,0 +1,33 @@
+SETUP NVIDIA CUDA
+
+
+
+--- Setting Up
+
+1. Download & Install CUDA Toolkit
+https://developer.nvidia.com/cuda-downloads (latest)
+https://developer.nvidia.com/cuda-toolkit-archive (archives)
+
+2. Download & Install cuDNN
+https://developer.nvidia.com/cudnn-downloads (latest)
+https://developer.nvidia.com/cudnn-archive (archives)
+
+or
+Python Wheels: Cài đặt nhanh qua pip với các gói `nvidia-cudnn-cu11` hoặc `nvidia-cudnn-cu12`
+
+
+
+--- Verify
+
+// kiểm tra Driver nhận card đồ họa và xem phiên bản CUDA cao nhất mà Driver hỗ trợ.
+$ nvidia-smi
+
+// kiểm tra xem máy đã nhận diện đúng bộ cài CUDA Toolkit 12 hay chưa, tìm release version (eg. release 12.x)
+$ nvcc --version
+
+
+
+--- References
+
+https://developer.nvidia.com/downloads
+https://github.com/NVIDIA/cudnn-frontend
