@@ -15,6 +15,11 @@ https://developer.nvidia.com/cudnn-archive (archives)
 or
 Python Wheels: Cài đặt nhanh qua pip với các gói `nvidia-cudnn-cu11` hoặc `nvidia-cudnn-cu12`
 
+3. Update Environment Variables (both User & System)
+
+CUDA_PATH (System)
+PATH (System)
+
 
 
 --- Verify
